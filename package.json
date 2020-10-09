@@ -1,0 +1,32 @@
+{
+  "name": "type-graph-api-template",
+  "version": "1.0.0",
+  "description": "Template for typescript and graphql based api",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon --exec ts-node src/index.ts",
+    "build": "tsc -p ."
+  },
+  "keywords": [
+    "typescript",
+    "graphql"
+  ],
+  "author": "Hrushikesh Kuklare",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/graphql": "^14.5.0",
+    "@types/node": "^14.0.24",
+    "@types/uuid": "^8.3.0",
+    "nodemon": "^2.0.4",
+    "ts-node": "^8.10.2",
+    "typescript": "^3.9.7"
+  },
+  "dependencies": {
+    "apollo-server": "^2.16.0",
+    "bcrypt": "^5.0.0",
+    "graphql": "^15.3.0",
+    "jsonwebtoken": "^8.5.1",
+    "pg": "^8.3.0",
+    "uuid": "^8.2.0"
+  }
+}
