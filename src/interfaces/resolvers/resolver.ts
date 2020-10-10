@@ -1,15 +1,20 @@
-import { AuthServiceController } from "../controller/auth_service_controller";
+import { UserAuthServiceController } from "../controller/user_auth_service_controller";
 // const AuthServiceController = require("../controller/auth_service_controller")
 import { dependencies } from "../../infrastructure/config/dependency_injector";
 
 export const resolvers = {
   Query: {
-    // me: () => "HRUSHIE",
-    login: (parent: any, args: any, ctx: any, info: any) =>
-      controllers.authService.login(args),
+    me: () => "HRUSHIE",
+  },
+
+  Mutation: {
+    loginAsUser: (parent: any, args: any, ctx: any, info: any) =>
+      controllers.userAuthService.login(args),
+    registerAsUser: (parent: any, args: any, ctx: any, info: any) =>
+      controllers.userAuthService.register(args),
   },
 };
 
 const controllers = {
-  authService: new AuthServiceController(dependencies),
+  userAuthService: new UserAuthServiceController(dependencies),
 };

@@ -1,9 +1,10 @@
 import { AuthenticationError } from "apollo-server";
-import { IAccessTokenManager } from "src/application/abstracts/access_token_manager_interface";
-import { IEncrypter } from "src/application/abstracts/encrypter_interface";
-import { IUserRepository } from "src/application/abstracts/user_repository_interface";
+import { IAccessTokenManager } from "../../../application/abstracts/access_token_manager_interface";
+import { IEncrypter } from "../../../application/abstracts/encrypter_interface";
+import { IUserRepository } from "../../../application/abstracts/user_repository_interface";
+// import User from "src/domain/entities/user";
 
-export class LoginUseCase {
+export class UserLoginUseCase {
   //constructor
   /**
    *

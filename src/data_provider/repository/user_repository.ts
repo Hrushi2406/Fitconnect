@@ -2,6 +2,9 @@ import { IUserRepository } from "../../application/abstracts/user_repository_int
 import { IUser } from "../../application/abstracts/user_repository_interface";
 
 export class UserRepository implements IUserRepository {
+  //Construtor
+  constructor(public dbConfig: DBConfig) {}
+
   getUserByEmail: (email: string) => Promise<IUser>;
   getUserById: (userId: string) => Promise<IUser>;
   registerUser: ({ user_id, name, email, password }: IUser) => Promise<void>;

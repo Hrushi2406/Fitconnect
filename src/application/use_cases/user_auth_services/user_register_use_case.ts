@@ -1,13 +1,13 @@
 import { IAccessTokenManager } from "src/application/abstracts/access_token_manager_interface";
 import { IEncrypter } from "src/application/abstracts/encrypter_interface";
 import { IIDGenerator } from "src/application/abstracts/id_generator_interface";
-import User from "src/domain/entities/user";
+import User from "../../../domain/entities/user";
 import {
   IUser,
   IUserRepository,
 } from "src/application/abstracts/user_repository_interface";
 
-export class RegisterUseCase {
+export class UserRegisterUseCase {
   //Default constructor
   /**
    *

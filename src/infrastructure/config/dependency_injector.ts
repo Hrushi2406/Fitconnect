@@ -20,5 +20,6 @@ export const dependencies: IDependencies = {
   //REPOSITORY
 
   //User repository
+
   userRepository: new UserRepository(),
 };
