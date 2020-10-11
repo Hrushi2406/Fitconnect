@@ -8,14 +8,22 @@ export class UserRepository implements IUserRepository {
   constructor(public db: Driver) {}
 
   //Returns user details
-  async getUserByEmail(email: string): Promise<IUser> {
+  async getUserByEmail(email: string): Promise<IUser | null> {
     try {
-      //Wrtire qurery here
-      return new User({
-        name: "afd",
-        email: "dsa",
-        password: "Af",
-      });
+      var session = this.db.session();
+
+      var cypher:string = "Match ( u:User { email : $email } ) Return u";
+      var result = await session.run(cypher, {email});
+
+      session.close();
+
+      if(!result.records.length){
+        return null;
+      }
+      var user:IUser = result.records[0].get("u").properties;
+
+      return new User(user);
+
     } catch (err) {
       console.log("Database error: ", err.message);
 
@@ -23,6 +31,42 @@ export class UserRepository implements IUserRepository {
     }
   }
 
-  getUserById: (userId: string) => Promise<IUser>;
-  registerUser: ({ user_id, name, email, password }: IUser) => Promise<void>;
+  async getUserById(userId: string) : Promise<IUser | null> {
+    try {
+      var session = this.db.session();
+
+      var cypher:string = "Match ( u:User { user_id : $userId } ) Return u";
+      var result = await session.run(cypher, {userId});
+
+      session.close();
+
+      if(!result.records.length){
+        return null;
+      }
+      var user:IUser = result.records[0].get("u").properties;
+
+      return new User(user);
+
+    } catch (err) {
+      console.log("Database error: ", err.message);
+
+      throw "Something went wrong";
+    }
+  };
+
+  async registerUser({ user_id, name, email, password }: IUser) : Promise<void>{
+    try {
+      var session = this.db.session();
+
+      var cypher:string = "Create (u:User {user_id:$user_id, name:$name, email:$email, password:$password})";
+      await session.run(cypher,{ user_id, name, email, password });
+
+      session.close();
+
+    } catch (err) {
+      console.log("Database error: ", err.message);
+
+      throw "Something went wrong";
+    }
+  };
 }

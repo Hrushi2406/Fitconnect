@@ -9,12 +9,12 @@ class User implements IUser {
 
   //constructor
   constructor({
-    user_id = "",
+    user_id,
     name,
     email,
     password,
   }: {
-    user_id?: string;
+    user_id: string;
     name: string;
     email: string;
     password: string;

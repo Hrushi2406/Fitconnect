@@ -29,7 +29,7 @@
     "bcrypt": "^5.0.0",
     "graphql": "^15.3.0",
     "jsonwebtoken": "^8.5.1",
-    "neo4j-driver": "^4.1.2",
+    "neo4j-driver": "^4.2.0-alpha01",
     "pg": "^8.3.0",
     "uuid": "^8.2.0"
   }

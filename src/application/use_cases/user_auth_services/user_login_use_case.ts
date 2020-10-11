@@ -36,7 +36,7 @@ export class UserLoginUseCase {
 
     //Checkings is password valid
     if (!isValid) {
-      throw new AuthenticationError("You dont have a account");
+      throw new AuthenticationError("Invalid Password");
     }
 
     //Generating token

@@ -5,8 +5,8 @@ export class AccessTokenManager implements IAccessTokenManager {
   //Generate a JWT token
   async generate(userId: string): Promise<string> {
     try {
-      const token = jwt.sign(userId, process.env.SECRET_KEY as string);
-
+      const token = jwt.sign(userId, "littlesecret");
+      
       return token;
     } catch (err) {
       //Logger

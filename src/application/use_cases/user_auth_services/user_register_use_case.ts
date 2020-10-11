@@ -31,19 +31,21 @@ export class UserRegisterUseCase {
 
     //Extract from args
     const {
+      user_id,
       name,
       email,
       password,
-    }: { name: string; email: string; password: string } = args;
+    }: {user_id: string; name: string; email: string; password: string } = args;
 
     //Construct a new object of user
     const user: IUser = new User({
+      user_id: user_id,
       name: name,
       email: email,
       password: password,
     });
 
-    await user.validate();
+    // await user.validate();
 
     //Encrypte password with bcrypt
     user.password = await encrypter.encrypt(user.password);
