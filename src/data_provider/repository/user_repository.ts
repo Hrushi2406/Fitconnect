@@ -1,7 +1,7 @@
 import { IUserRepository } from "../../application/abstracts/user_repository_interface";
 import { IUser } from "../../application/abstracts/user_repository_interface";
 import { Driver } from "neo4j-driver";
-import User from "src/domain/entities/user";
+import User from "../../domain/entities/user";
 
 export class UserRepository implements IUserRepository {
   //Construtor
