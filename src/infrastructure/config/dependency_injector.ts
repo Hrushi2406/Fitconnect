@@ -4,6 +4,7 @@ import { Encrypter } from "../security/encrypter";
 import { UserRepository } from "../../data_provider/repository/user_repository";
 import { CustomError } from "../../application/abstracts/custom_error";
 import { IDGenerator } from "../core/id_generator";
+import driver from "./db_config";
 
 export const dependencies: IDependencies = {
   //GENERAL
@@ -21,5 +22,5 @@ export const dependencies: IDependencies = {
 
   //User repository
 
-  userRepository: new UserRepository(),
+  userRepository: new UserRepository(driver),
 };
