@@ -1,4 +1,5 @@
 import { AuthenticationError } from "apollo-server";
+import { ICustomError } from "../../../application/abstracts/custom_error";
 import { IAccessTokenManager } from "../../../application/abstracts/access_token_manager_interface";
 import { IEncrypter } from "../../../application/abstracts/encrypter_interface";
 import { IUserRepository } from "../../../application/abstracts/user_repository_interface";
@@ -15,20 +16,21 @@ export class UserLoginUseCase {
   constructor(
     public userRepository: IUserRepository,
     public encrypter: IEncrypter,
-    public accessTokenManager: IAccessTokenManager
+    public accessTokenManager: IAccessTokenManager,
+    public customError: ICustomError
   ) {}
 
   //Executable default functions
   async execute(email: string, password: string): Promise<string> {
     //extracting fron this
-    const { userRepository, encrypter, accessTokenManager } = this;
+    const { userRepository, encrypter, accessTokenManager, customError } = this;
 
     //Checking user if exists
     const user = await userRepository.getUserByEmail(email);
 
     //If not throw error
     if (!user) {
-      throw new AuthenticationError("You dont have a account");
+      throw (customError.message = "You don't have a account");
     }
 
     //comparing passwords
@@ -36,7 +38,7 @@ export class UserLoginUseCase {
 
     //Checkings is password valid
     if (!isValid) {
-      throw new AuthenticationError("Invalid Password");
+      throw (customError.password = "Invalid Password");
     }
 
     //Generating token

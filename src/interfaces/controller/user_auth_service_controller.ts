@@ -13,13 +13,15 @@ export class UserAuthServiceController {
     this.loginUseCase = new UserLoginUseCase(
       dependencies.userRepository,
       dependencies.encrypter,
-      dependencies.accessTokenManager
+      dependencies.accessTokenManager,
+      dependencies.customError
     );
     this.registerUseCase = new UserRegisterUseCase(
       dependencies.userRepository,
       dependencies.idGenerator,
       dependencies.encrypter,
-      dependencies.accessTokenManager
+      dependencies.accessTokenManager,
+      dependencies.customError
     );
   }
 
@@ -31,20 +33,30 @@ export class UserAuthServiceController {
     email: string;
     password: string;
   }): Promise<String> {
-    //Get token from use case
-    const token: string = await this.loginUseCase.execute(email, password);
+    try {
+      //Get token from use case
+      const token: string = await this.loginUseCase.execute(email, password);
 
-    //Return the token
-    return token;
+      //Return the token
+      return token;
+    } catch (err) {
+      //Format Error Message
+      throw this.dependencies.customError.throw();
+    }
   }
 
   //Register
   async register(args: any): Promise<String> {
-    //Get toke from the use case
-    const token: string = await this.registerUseCase.execute(args);
+    try {
+      //Get toke from the use case
+      const token: string = await this.registerUseCase.execute(args);
 
-    //Return the token
-    return token;
+      //Return the token
+      return token;
+    } catch (err) {
+      //Format Error Message
+      throw this.dependencies.customError.throw();
+    }
   }
 }
 

@@ -1,8 +1,9 @@
-import { ApolloServer, gql } from "apollo-server";
-import { resolvers } from "./interfaces/resolvers/resolver";
 import dotenv from "dotenv";
 
 dotenv.config();
+
+import { ApolloServer, gql } from "apollo-server";
+import { resolvers } from "./interfaces/resolvers/resolver";
 
 const typeDefs = gql`
   type Query {
@@ -10,7 +11,12 @@ const typeDefs = gql`
   }
   type Mutation {
     loginAsUser(email: String, password: String): String
-    registerAsUser(user_id: String, name: String, email: String, password: String): String
+    registerAsUser(
+      user_id: String
+      name: String
+      email: String
+      password: String
+    ): String
   }
 `;
 

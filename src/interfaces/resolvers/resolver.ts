@@ -1,10 +1,15 @@
 import { UserAuthServiceController } from "../controller/user_auth_service_controller";
 // const AuthServiceController = require("../controller/auth_service_controller")
 import { dependencies } from "../../infrastructure/config/dependency_injector";
+import { UserRepository } from "../../data_provider/repository/user_repository";
+import driver from "../../infrastructure/config/db_config";
 
 export const resolvers = {
   Query: {
-    me: () => "HRUSHIE",
+    me: () => {
+      new UserRepository(driver).getUserByEmail("adsf");
+      return "HRushi";
+    },
   },
 
   Mutation: {

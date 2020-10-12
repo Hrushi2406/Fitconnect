@@ -1,11 +1,12 @@
 import { IAccessTokenManager } from "src/application/abstracts/access_token_manager_interface";
-import { IEncrypter } from "src/application/abstracts/encrypter_interface";
-import { IIDGenerator } from "src/application/abstracts/id_generator_interface";
-import User from "../../../domain/entities/user";
+import { IEncrypter } from "../../../application/abstracts/encrypter_interface";
+import { IIDGenerator } from "../../../application/abstracts/id_generator_interface";
 import {
   IUser,
   IUserRepository,
-} from "src/application/abstracts/user_repository_interface";
+} from "../../../application/abstracts/user_repository_interface";
+import { ICustomError } from "../../../application/abstracts/custom_error";
+import User from "../../../domain/entities/user";
 
 export class UserRegisterUseCase {
   //Default constructor
@@ -20,7 +21,8 @@ export class UserRegisterUseCase {
     public userRepository: IUserRepository,
     public idGenerator: IIDGenerator,
     public encrypter: IEncrypter,
-    public accessTokenManager: IAccessTokenManager
+    public accessTokenManager: IAccessTokenManager,
+    public customError: ICustomError
   ) {}
 
   //Default executable function
@@ -35,7 +37,12 @@ export class UserRegisterUseCase {
       name,
       email,
       password,
-    }: {user_id: string; name: string; email: string; password: string } = args;
+    }: {
+      user_id: string;
+      name: string;
+      email: string;
+      password: string;
+    } = args;
 
     //Construct a new object of user
     const user: IUser = new User({

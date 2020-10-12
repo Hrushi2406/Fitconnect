@@ -20,11 +20,29 @@ export class CustomError implements ICustomError {
 
   //Throw Error
   throw() {
-    throw new ApolloError(this.message, this.code, {
+    const err = new ApolloError(this.message, this.code, {
       email: this.email,
       password: this.password,
       name: this.name,
     });
+
+    this.clear();
+
+    throw err;
+  }
+
+  //Clear all field
+  clear() {
+    this.message = "";
+
+    //Error status code
+    this.code = "";
+
+    //Error in email
+    this.email = "";
+
+    //Error in password
+    this.password = "";
   }
 }
 
@@ -34,4 +52,6 @@ export interface ICustomError {
   email: string;
   password: string;
   name: string;
+  throw: () => void;
+  clear: () => void;
 }
