@@ -3,11 +3,12 @@ import { UserAuthServiceController } from "../controller/user_auth_service_contr
 import { dependencies } from "../../infrastructure/config/dependency_injector";
 import { UserRepository } from "../../data_provider/repository/user_repository";
 import driver from "../../infrastructure/config/db_config";
+import { seedTrainer } from "../../infrastructure/config/seed_data";
 
 export const resolvers = {
   Query: {
     me: () => {
-      new UserRepository(driver).getUserByEmail("adsf");
+      seedTrainer();
       return "HRushi";
     },
   },

@@ -1,6 +1,5 @@
 import { IUser } from "../../application/abstracts/user_repository_interface";
 
-
 class User implements IUser {
   readonly user_id: string;
   readonly name: string;
@@ -9,12 +8,12 @@ class User implements IUser {
 
   //constructor
   constructor({
-    user_id,
+    user_id = "",
     name,
     email,
     password,
   }: {
-    user_id: string;
+    user_id?: string;
     name: string;
     email: string;
     password: string;

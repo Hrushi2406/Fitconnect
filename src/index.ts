@@ -4,6 +4,7 @@ dotenv.config();
 
 import { ApolloServer, gql } from "apollo-server";
 import { resolvers } from "./interfaces/resolvers/resolver";
+import { seedTrainer } from "./infrastructure/config/seed_data";
 
 const typeDefs = gql`
   type Query {
@@ -19,6 +20,8 @@ const typeDefs = gql`
     ): String
   }
 `;
+
+// seedTrainer();
 
 const server = new ApolloServer({
   typeDefs,
