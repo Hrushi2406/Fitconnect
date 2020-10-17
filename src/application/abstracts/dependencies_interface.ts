@@ -1,4 +1,5 @@
 import { IUserRepository } from "./user_repository_interface";
+import { ITrainerRepository } from "./trainer_repository_interface";
 import { IAccessTokenManager } from "./access_token_manager_interface";
 import { IEncrypter } from "./encrypter_interface";
 import { ICustomError } from "./custom_error";
@@ -20,4 +21,7 @@ export interface IDependencies {
 
   //User Repository
   userRepository: IUserRepository;
+
+  //Trainer Repository
+  trainerRepository: ITrainerRepository;
 }

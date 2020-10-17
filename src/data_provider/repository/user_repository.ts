@@ -10,10 +10,10 @@ export class UserRepository implements IUserRepository {
   //Returns user details
   async getUserByEmail(email: string): Promise<IUser | null> {
     try {
-      var session = this.db.session();
+      const session = this.db.session();
 
-      var cypher: string = "Match ( u:User { email : $email } ) Return u";
-      var result = await session.run(cypher, { email });
+      const cypher: string = "Match ( u:User { email : $email } ) Return u";
+      const result = await session.run(cypher, { email });
 
       session.close();
 
@@ -21,7 +21,7 @@ export class UserRepository implements IUserRepository {
         return null;
       }
 
-      var user: IUser = result.records[0].get("u").properties;
+      const user: IUser = result.records[0].get("u").properties;
 
       return new User(user);
     } catch (err) {
@@ -33,17 +33,17 @@ export class UserRepository implements IUserRepository {
 
   async getUserById(userId: string): Promise<IUser | null> {
     try {
-      var session = this.db.session();
+      const session = this.db.session();
 
-      var cypher: string = "Match ( u:User { user_id : $userId } ) Return u";
-      var result = await session.run(cypher, { userId });
+      const cypher: string = "Match ( u:User { user_id : $userId } ) Return u";
+      const result = await session.run(cypher, { userId });
 
       session.close();
 
       if (!result.records.length) {
         return null;
       }
-      var user: IUser = result.records[0].get("u").properties;
+      const user: IUser = result.records[0].get("u").properties;
 
       return new User(user);
     } catch (err) {
@@ -55,9 +55,9 @@ export class UserRepository implements IUserRepository {
 
   async registerUser({ user_id, name, email, password }: IUser): Promise<void> {
     try {
-      var session = this.db.session();
+      const session = this.db.session();
 
-      var cypher: string =
+      const cypher: string =
         "Create (u:User {user_id:$user_id, name:$name, email:$email, password:$password})";
       await session.run(cypher, { user_id, name, email, password });
 

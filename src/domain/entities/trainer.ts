@@ -11,6 +11,7 @@ export class Trainer {
   readonly mobile: string;
   readonly fc_rating: number;
   readonly images: string[];
+  readonly min_cost: number;
   readonly geometry: IGeometry;
 
   constructor({
@@ -26,6 +27,7 @@ export class Trainer {
     mobile,
     fc_rating,
     images,
+    min_cost,
     geometry,
   }: ITrainer) {
     this.trainer_id = trainer_id;
@@ -40,6 +42,7 @@ export class Trainer {
     this.mobile = mobile;
     this.fc_rating = fc_rating;
     this.images = images;
+    this.min_cost = min_cost;
     this.geometry = geometry;
   }
 
@@ -57,6 +60,7 @@ export class Trainer {
       mobile: this.mobile,
       images: this.images,
       fcRating: this.fc_rating,
+      minCost: this.min_cost,
       geometry: this.geometry,
     };
   }
@@ -75,6 +79,7 @@ export interface ITrainer {
   mobile: string;
   fc_rating: number;
   images: string[];
+  min_cost: number;
   geometry: IGeometry;
 }
 

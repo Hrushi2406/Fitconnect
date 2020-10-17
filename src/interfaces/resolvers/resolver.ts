@@ -1,5 +1,5 @@
 import { UserAuthServiceController } from "../controller/user_auth_service_controller";
-// const AuthServiceController = require("../controller/auth_service_controller")
+import { TrainerController } from "../controller/trainer_controller";
 import { dependencies } from "../../infrastructure/config/dependency_injector";
 import { UserRepository } from "../../data_provider/repository/user_repository";
 import driver from "../../infrastructure/config/db_config";
@@ -11,6 +11,8 @@ export const resolvers = {
       seedTrainer();
       return "HRushi";
     },
+    searchTrainer: (parent: any, args: any, ctx: any, info: any) => 
+      controllers.trainerService.filterAndSearch(args),
   },
 
   Mutation: {
@@ -23,4 +25,5 @@ export const resolvers = {
 
 const controllers = {
   userAuthService: new UserAuthServiceController(dependencies),
+  trainerService: new TrainerController(dependencies),
 };

@@ -78,10 +78,16 @@ export async function seedTrainer(): Promise<void> {
 
     console.log("CREATING " + random + " PLANS");
 
+    var minimum: number = 99999;
+
     //CREATING AND ADDING PLANS
     for (let i = 0; i < random; i++) {
       //create a plan
       var plan = createPlan();
+
+      if(minimum > plan.price){
+        minimum = plan.price 
+      }
 
       //query
       const planQ = `CREATE (p:Plan {plan_id: $plan_id, title: $title, price:$price, type: $type}) `;
@@ -101,7 +107,24 @@ export async function seedTrainer(): Promise<void> {
 
       console.log("T -- P RELATIONSHIP CREATED");
     }
+    //MIN COST PLAN
+    const mCost = `MATCH (t:Trainer{ trainer_id:$trainer_id} ) SET t.min_cost=$min_cost RETURN t.min_cost`;
+
+    //ASSIGN MIN COST
+    await session.run(mCost, {
+      trainer_id: trainer.trainer_id,
+      min_cost: minimum,
+    });
+
+    console.log("ASSIGNED MIN COST OF PLAN");
   }
+  //CREATE INDEX QUERY
+  const index = "CALL db.index.fulltext.createNodeIndex('trainer_index', ['Trainer'], ['name', 'address', 'bio', 'category'])";
+
+  //CREATE INDEX
+  await session.run(index);
+
+  console.log("CREATED INDEX ON TRAINER");
 
   console.log("SEEDED DATABASE SUCCESSFULLY");
 
@@ -143,6 +166,7 @@ function createTrainer(): Trainer {
     mobile: faker.phone.phoneNumber(),
     images: [faker.image.people()],
     fc_rating: Math.floor(Math.random() * (99 - 60)) + 60,
+    min_cost: 1000000,
     geometry: {
       geometry_id: new IDGenerator().generate(),
       lat: parseFloat(
