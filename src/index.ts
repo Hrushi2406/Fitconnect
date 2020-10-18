@@ -7,7 +7,6 @@ import { resolvers } from "./interfaces/resolvers/resolver";
 import { ITrainer } from "./domain/entities/trainer";
 
 
-
 const typeDefs = gql`
   type Geometry {
     geometryId: String
@@ -31,8 +30,21 @@ const typeDefs = gql`
     minCost: Int
     geometry: Geometry
   }
+  type User{
+    userId: String
+    name: String
+    email: String
+    password: String
+    mobile: String
+    age: Int
+    gender: String
+    bio: String 
+    address: String
+    imageUrl: String
+  }
   type Query {
     me: String
+    user: String
     searchTrainer(
       userLat: Float
       userLong: Float
@@ -46,6 +58,12 @@ const typeDefs = gql`
       order: String
       keyword: String
     ): [Trainer]
+    getUserProfile(
+      user_id: String
+    ): User
+    getTrainerProfile(
+      trainer_id: String
+    ): Trainer
   }
   type Mutation {
     loginAsUser(email: String, password: String): String
@@ -54,7 +72,25 @@ const typeDefs = gql`
       name: String
       email: String
       password: String
+      mobile: String
+      age: Int
+      gender: String
+      bio: String
+      address: String
+      image_url: String
     ): String
+    updateUserProfile(
+      user_id: String
+      name: String
+      email: String
+      password: String
+      mobile: String
+      age: Int
+      gender: String
+      bio: String
+      address: String
+      image_url: String
+    ) : String
   }
 `;
 

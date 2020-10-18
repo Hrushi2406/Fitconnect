@@ -1,9 +1,9 @@
 import { UserAuthServiceController } from "../controller/user_auth_service_controller";
 import { TrainerController } from "../controller/trainer_controller";
+import { UserProfileController } from "../controller/user_profile_controller";
 import { dependencies } from "../../infrastructure/config/dependency_injector";
-import { UserRepository } from "../../data_provider/repository/user_repository";
-import driver from "../../infrastructure/config/db_config";
 import { seedTrainer } from "../../infrastructure/config/seed_data";
+import { seedUser } from "../../infrastructure/config/user_data";
 
 export const resolvers = {
   Query: {
@@ -11,19 +11,37 @@ export const resolvers = {
       seedTrainer();
       return "HRushi";
     },
-    searchTrainer: (parent: any, args: any, ctx: any, info: any) => 
-      controllers.trainerService.filterAndSearch(args),
+    user: () => {
+      seedUser();
+      return "Generating User data";
+    },
+    searchTrainer: (parent: any, args: any, ctx: any, info: any) => {
+      return controllers.trainerService.filterAndSearch(args);
+    },
+    getUserProfile: (parent: any, args: any, ctx: any, info: any) => {
+      return controllers.userProfileService.getUserProfile(args);
+    },
+    getTrainerProfile: (parent: any, args: any, ctx: any, info: any) => {
+      return controllers.trainerService.getTrainerProfile(args);
+    },
   },
 
   Mutation: {
-    loginAsUser: (parent: any, args: any, ctx: any, info: any) =>
-      controllers.userAuthService.login(args),
-    registerAsUser: (parent: any, args: any, ctx: any, info: any) =>
-      controllers.userAuthService.register(args),
+    loginAsUser: (parent: any, args: any, ctx: any, info: any) => {
+      return controllers.userAuthService.login(args);
+    },
+    registerAsUser: (parent: any, args: any, ctx: any, info: any) => {
+      return controllers.userAuthService.register(args);
+    },
+    updateUserProfile: (parent: any, args: any, ctx: any, info: any) => {
+      controllers.userProfileService.updateUserProfile(args);
+      return "Updated";
+    },
   },
 };
 
 const controllers = {
   userAuthService: new UserAuthServiceController(dependencies),
   trainerService: new TrainerController(dependencies),
+  userProfileService: new UserProfileController(),
 };

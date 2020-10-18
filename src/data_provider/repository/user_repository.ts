@@ -34,13 +34,13 @@ export class UserRepository implements IUserRepository {
   async getUserById(userId: string): Promise<IUser | null> {
     try {
       const session = this.db.session();
-
-      const cypher: string = "Match ( u:User { user_id : $userId } ) Return u";
-      const result = await session.run(cypher, { userId });
+      
+      const cypher: string = "Match ( u:User { user_id: $user_id } ) Return u";
+      const result = await session.run(cypher, { user_id: userId });
 
       session.close();
 
-      if (!result.records.length) {
+      if (result.records.length == 0) {
         return null;
       }
       const user: IUser = result.records[0].get("u").properties;
@@ -53,13 +53,29 @@ export class UserRepository implements IUserRepository {
     }
   }
 
-  async registerUser({ user_id, name, email, password }: IUser): Promise<void> {
+  async updateUser({ user_id, name, email, password, mobile, age, gender, bio, address, image_url }: IUser): Promise<void> {
     try {
       const session = this.db.session();
 
       const cypher: string =
-        "Create (u:User {user_id:$user_id, name:$name, email:$email, password:$password})";
-      await session.run(cypher, { user_id, name, email, password });
+        "Match (u:User {user_id:$user_id} ) SET u.name=$name, u.mobile=$mobile, u.age=$age, u.gender=$gender, u.bio=$bio, u.address=$address";
+      await session.run(cypher, { user_id, name, email, password, mobile, age, gender, bio, address, image_url });
+
+      session.close();
+    } catch (err) {
+      console.log("Database error: ", err.message);
+
+      throw "Something went wrong";
+    }
+  }
+
+  async registerUser({ user_id, name, email, password, mobile, age, gender, bio, address, image_url }: IUser): Promise<void> {
+    try {
+      const session = this.db.session();
+
+      const cypher: string =
+        "Create (u:User {user_id:$user_id, name:$name, email:$email, password:$password, mobile:$mobile, age:$age, gender:$gender, bio:$bio, address:$address, image_url:$image_url})";
+      await session.run(cypher, { user_id, name, email, password, mobile, age, gender, bio, address, image_url });
 
       session.close();
     } catch (err) {

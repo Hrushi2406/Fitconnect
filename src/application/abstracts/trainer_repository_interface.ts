@@ -1,26 +1,12 @@
 import { ITrainer } from "../../domain/entities/trainer"
 
 export interface ITrainerRepository {
-    //Filter by max distance
-    distanceFilter: (prevQuery: string) => string;
-  
-    //Filter by starting price
-    priceFilter: (prevQuery: string) => string;
 
-    //Filter by category
-    categoryFilter: (prevQuery: string) => string;
-  
-    //Filter by min rating
-    ratingFilter: (prevQuery: string) => string;
-    
-    //Filter by gender
-    genderFilter: (prevQuery: string) => string;
-  
-    //Filter by age
-    ageFilter: (prevQuery: string) => string;
+    //Get trainer profile
+    getTrainerbyId: (trainer_id: string) => Promise<any>;
 
     //Full text search & execute the query
-    execute: (
+    search: (
       userLat: number,
       userLong: number,
       maxDistance: number, 

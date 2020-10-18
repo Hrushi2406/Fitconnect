@@ -5,8 +5,11 @@ export interface IUserRepository {
   //Retrieve user by id
   getUserById: (userId: string) => Promise<IUser | null>;
 
+  //Update user
+  updateUser: ({ user_id, name, email, password, mobile, age, gender, bio, address, image_url }: IUser) => Promise<void>;
+
   //Sign Up user
-  registerUser: ({ user_id, name, email, password }: IUser) => Promise<void>;
+  registerUser: ({ user_id, name, email, password, mobile, age, gender, bio, address, image_url }: IUser) => Promise<void>;
 }
 
 export interface IUser {
@@ -14,12 +17,12 @@ export interface IUser {
   name: string;
   email: string;
   password: string;
-  // age: number;
-  // gender: string;
-  // bio: string;
-  // address: string;
-  // image_url: string;
-  // Geometry
+  mobile: string;
+  age: number;
+  gender: string;
+  bio: string;
+  address: string;
+  image_url: string;
   validate: () => Promise<void>;
   hydrate: () => any;
 }

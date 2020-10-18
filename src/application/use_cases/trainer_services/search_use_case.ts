@@ -31,30 +31,30 @@ export class SearchUseCase {
     var Query: string = ""; 
 
     if(maxDistance != -1){
-      Query = this.trainerRepository.distanceFilter(Query);
+      Query += " Match (node)-[:LIVES]->(l:Geometry) WHERE distance(point({ latitude: $userLat, longitude: $userLong }), point({ latitude: l.lat, longitude: l.lon })) < $maxDistance";
     }
 
     if(maxPrice != -1){
-      Query = this.trainerRepository.priceFilter(Query);
+      Query += " Match (node) WHERE node.min_cost <= $maxPrice";
     }
      
     if(category != ""){
-      Query = this.trainerRepository.categoryFilter(Query);
+      Query += " Match (node)-[:OFTYPE]->( c:Category{ name:$category } )";
     }
 
     if(minRating != -1){
-      Query = this.trainerRepository.ratingFilter(Query);
+      Query += " Match (node)  WHERE node.fc_rating >= $minRating";
     }
 
     if(gender != ""){
-      Query = this.trainerRepository.genderFilter(Query);
+      Query += " Match (node)  WHERE node.gender = $gender";
     }
     
     if(age != -1){
-      Query = this.trainerRepository.ageFilter(Query);
+      Query += " Match (node) WHERE node.age <= $age";
     }
 
-    const result = await this.trainerRepository.execute(
+    const result = await this.trainerRepository.search(
       userLat,
       userLong,
       maxDistance,

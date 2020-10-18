@@ -56,7 +56,7 @@ export async function seedTrainer(): Promise<void> {
 
     //GEOMETRY
 
-    const createGeometry = `CREATE (g:Geometry {geometry_id: $geometry_id, lat: $lat, lon: $lon, description: $description}) `;
+    const createGeometry = `CREATE (g:Geometry {geometry_id: $geometry_id, lat: toFloat($lat), lon: toFloat($lon), description: $description}) `;
 
     //creating geometry
     await session.run(createGeometry, trainer.geometry);

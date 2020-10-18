@@ -5,6 +5,12 @@ class User implements IUser {
   readonly name: string;
   readonly email: string;
   readonly password: string;
+  readonly mobile: string;
+  readonly age: number;
+  readonly gender: string;
+  readonly bio: string;
+  readonly address: string;
+  readonly image_url: string;
 
   //constructor
   constructor({
@@ -12,25 +18,50 @@ class User implements IUser {
     name,
     email,
     password,
+    mobile,
+    age, 
+    gender, 
+    bio, 
+    address, 
+    image_url
   }: {
     user_id?: string;
     name: string;
     email: string;
     password: string;
+    mobile: string;
+    age: number;
+    gender: string;
+    bio: string;
+    address: string;
+    image_url: string;
   }) {
     this.user_id = user_id;
     this.name = name;
     this.email = email;
     this.password = password;
+    this.mobile = mobile;
+    this.age = age;
+    this.gender = gender;
+    this.bio = bio;
+    this.address = address;
+    this.image_url = image_url;
   }
 
   //Serialize data
   hydrate() {
-    const { user_id, name, email } = this;
+    const { user_id, name, email, password, mobile, age, gender, bio, address, image_url } = this;
     return {
       userId: user_id,
       name: name,
       email: email,
+      password: password,
+      mobile: mobile,
+      age: age,
+      gender: gender,
+      bio: bio, 
+      address: address,
+      imageUrl: image_url
     };
   }
 

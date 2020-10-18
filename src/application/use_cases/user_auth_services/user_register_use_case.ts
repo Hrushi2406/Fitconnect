@@ -37,11 +37,23 @@ export class UserRegisterUseCase {
       name,
       email,
       password,
+      mobile,
+      age, 
+      gender, 
+      bio, 
+      address, 
+      image_url
     }: {
       user_id: string;
       name: string;
       email: string;
       password: string;
+      mobile: string;
+      age: number;
+      gender: string;
+      bio: string;
+      address: string;
+      image_url: string;
     } = args;
 
     //Construct a new object of user
@@ -50,6 +62,12 @@ export class UserRegisterUseCase {
       name: name,
       email: email,
       password: password,
+      mobile: mobile,
+      age: age,
+      gender: gender,
+      bio: bio, 
+      address: address,
+      image_url: image_url
     });
 
     // await user.validate();
