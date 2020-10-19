@@ -1,12 +1,12 @@
-import { TrainerRepository } from "../../data_provider/repository/trainer_repository";
+import { dependencies } from "../../infrastructure/config/dependency_injector";
 import { IDependencies } from "../../application/abstracts/dependencies_interface";
-import { SearchUseCase } from "../../application/use_cases/trainer_services/search_use_case";
-import db from "../../infrastructure/config/db_config";
+import { SearchUseCase } from "../../application/use_cases/trainer_services/search_use_case"; 
+import { Trainer } from "../../domain/entities/trainer";
+import { Plan } from "../../domain/entities/plans";
 
 export class TrainerController {
   //UseCases
   private searchUseCase: SearchUseCase;
-  private trainerRepository: TrainerRepository = new TrainerRepository(db);
 
   //constructor
   constructor(public dependencies: IDependencies) {
@@ -16,10 +16,24 @@ export class TrainerController {
     );
   }
 
-  async getTrainerProfile({trainer_id}: {trainer_id: string}): Promise<any> {
+  async getTrainerProfile({trainerId}: {trainerId: string}): Promise<Trainer | null> {
     try {
       //Get result from search use case
-      const result: any = await this.trainerRepository.getTrainerbyId(trainer_id);
+      const result: any = await dependencies.trainerRepository.getTrainerbyId(trainerId);
+
+      //Return the result
+      return result;
+    } catch (err) {
+      //Format Error Message
+      throw this.dependencies.customError.throw();
+    }
+  }
+
+  //Get plans by trainerId
+  async getTrainerPlans({trainerId}: {trainerId: string}): Promise<[Plan] | null> {
+    try {
+      //Get result from search use case
+      const result: [Plan] | null = await dependencies.trainerRepository.getTrainerPlans(trainerId);
 
       //Return the result
       return result;
@@ -54,7 +68,7 @@ export class TrainerController {
     sortBy: string;
     order: string;
     keyword: string;
-  }): Promise<any> {
+  }): Promise<[Trainer] | null> {
     try {
       //Get result from search use case
       const result: any = await this.searchUseCase.execute(

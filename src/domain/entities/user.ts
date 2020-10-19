@@ -1,7 +1,7 @@
 import { IUser } from "../../application/abstracts/user_repository_interface";
 
 class User implements IUser {
-  readonly user_id: string;
+  readonly userId: string;
   readonly name: string;
   readonly email: string;
   readonly password: string;
@@ -10,11 +10,11 @@ class User implements IUser {
   readonly gender: string;
   readonly bio: string;
   readonly address: string;
-  readonly image_url: string;
+  readonly imageUrl: string;
 
   //constructor
   constructor({
-    user_id = "",
+    userId = "",
     name,
     email,
     password,
@@ -23,9 +23,9 @@ class User implements IUser {
     gender, 
     bio, 
     address, 
-    image_url
+    imageUrl
   }: {
-    user_id?: string;
+    userId?: string;
     name: string;
     email: string;
     password: string;
@@ -34,9 +34,9 @@ class User implements IUser {
     gender: string;
     bio: string;
     address: string;
-    image_url: string;
+    imageUrl: string;
   }) {
-    this.user_id = user_id;
+    this.userId = userId;
     this.name = name;
     this.email = email;
     this.password = password;
@@ -45,14 +45,14 @@ class User implements IUser {
     this.gender = gender;
     this.bio = bio;
     this.address = address;
-    this.image_url = image_url;
+    this.imageUrl = imageUrl;
   }
 
   //Serialize data
   hydrate() {
-    const { user_id, name, email, password, mobile, age, gender, bio, address, image_url } = this;
+    const { userId, name, email, password, mobile, age, gender, bio, address, imageUrl } = this;
     return {
-      userId: user_id,
+      userId: userId,
       name: name,
       email: email,
       password: password,
@@ -61,7 +61,7 @@ class User implements IUser {
       gender: gender,
       bio: bio, 
       address: address,
-      imageUrl: image_url
+      imageUrl: imageUrl
     };
   }
 

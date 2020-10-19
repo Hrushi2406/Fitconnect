@@ -42,7 +42,7 @@ export class UserLoginUseCase {
     }
 
     //Generating token
-    const token = await accessTokenManager.generate(user.user_id);
+    const token = await accessTokenManager.generate(user.userId);
 
     //Logg
     console.log("Token generated successfully " + token);

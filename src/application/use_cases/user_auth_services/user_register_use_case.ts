@@ -33,7 +33,7 @@ export class UserRegisterUseCase {
 
     //Extract from args
     const {
-      user_id,
+      userId,
       name,
       email,
       password,
@@ -42,9 +42,9 @@ export class UserRegisterUseCase {
       gender, 
       bio, 
       address, 
-      image_url
+      imageUrl
     }: {
-      user_id: string;
+      userId: string;
       name: string;
       email: string;
       password: string;
@@ -53,12 +53,12 @@ export class UserRegisterUseCase {
       gender: string;
       bio: string;
       address: string;
-      image_url: string;
+      imageUrl: string;
     } = args;
 
     //Construct a new object of user
     const user: IUser = new User({
-      user_id: user_id,
+      userId: userId,
       name: name,
       email: email,
       password: password,
@@ -67,7 +67,7 @@ export class UserRegisterUseCase {
       gender: gender,
       bio: bio, 
       address: address,
-      image_url: image_url
+      imageUrl: imageUrl
     });
 
     // await user.validate();
@@ -76,13 +76,13 @@ export class UserRegisterUseCase {
     user.password = await encrypter.encrypt(user.password);
 
     //Genereate a uniuque ID
-    user.user_id = idGenerator.generate();
+    user.userId = idGenerator.generate();
 
     //Add To Database
     await userRepository.registerUser(user);
 
     //Generate a JWT Token
-    const token: string = await accessTokenManager.generate(user.user_id);
+    const token: string = await accessTokenManager.generate(user.userId);
 
     //Log
     console.log("Token Generated Successfully " + token);

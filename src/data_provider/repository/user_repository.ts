@@ -35,8 +35,8 @@ export class UserRepository implements IUserRepository {
     try {
       const session = this.db.session();
       
-      const cypher: string = "Match ( u:User { user_id: $user_id } ) Return u";
-      const result = await session.run(cypher, { user_id: userId });
+      const cypher: string = "Match ( u:User { userId: $userId } ) Return u";
+      const result = await session.run(cypher, { userId: userId });
 
       session.close();
 
@@ -53,14 +53,14 @@ export class UserRepository implements IUserRepository {
     }
   }
 
-  async updateUser({ user_id, name, email, password, mobile, age, gender, bio, address, image_url }: IUser): Promise<void> {
+  async updateUser({ userId, name, email, password, mobile, age, gender, bio, address, imageUrl }: IUser): Promise<void> {
     try {
       const session = this.db.session();
-
+      
       const cypher: string =
-        "Match (u:User {user_id:$user_id} ) SET u.name=$name, u.mobile=$mobile, u.age=$age, u.gender=$gender, u.bio=$bio, u.address=$address";
-      await session.run(cypher, { user_id, name, email, password, mobile, age, gender, bio, address, image_url });
-
+        "Match (u:User {userId:$userId} ) SET u.name=$name, u.mobile=$mobile, u.age=$age, u.gender=$gender, u.bio=$bio, u.address=$address";
+      await session.run(cypher, { userId, name, email, password, mobile, age, gender, bio, address, imageUrl });
+      
       session.close();
     } catch (err) {
       console.log("Database error: ", err.message);
@@ -69,13 +69,13 @@ export class UserRepository implements IUserRepository {
     }
   }
 
-  async registerUser({ user_id, name, email, password, mobile, age, gender, bio, address, image_url }: IUser): Promise<void> {
+  async registerUser({ userId, name, email, password, mobile, age, gender, bio, address, imageUrl }: IUser): Promise<void> {
     try {
       const session = this.db.session();
 
       const cypher: string =
-        "Create (u:User {user_id:$user_id, name:$name, email:$email, password:$password, mobile:$mobile, age:$age, gender:$gender, bio:$bio, address:$address, image_url:$image_url})";
-      await session.run(cypher, { user_id, name, email, password, mobile, age, gender, bio, address, image_url });
+        "Create (u:User {userId:$userId, name:$name, email:$email, password:$password, mobile:$mobile, age:$age, gender:$gender, bio:$bio, address:$address, imageUrl:$imageUrl})";
+      await session.run(cypher, { userId, name, email, password, mobile, age, gender, bio, address, imageUrl });
 
       session.close();
     } catch (err) {

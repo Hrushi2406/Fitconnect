@@ -27,7 +27,7 @@ const typeDefs = gql`
     mobile: String
     fcRating: Int
     images: [String]
-    minCost: Int
+    startPrice: Int
     geometry: Geometry
   }
   type User{
@@ -41,6 +41,12 @@ const typeDefs = gql`
     bio: String 
     address: String
     imageUrl: String
+  }
+  type Plan{
+    planId: String
+    title: String
+    type: String
+    price: Int
   }
   type Query {
     me: String
@@ -59,16 +65,19 @@ const typeDefs = gql`
       keyword: String
     ): [Trainer]
     getUserProfile(
-      user_id: String
+      userId: String
     ): User
     getTrainerProfile(
-      trainer_id: String
+      trainerId: String
     ): Trainer
+    getTrainerPlans(
+      trainerId: String
+    ): [Plan]
   }
   type Mutation {
     loginAsUser(email: String, password: String): String
     registerAsUser(
-      user_id: String
+      userId: String
       name: String
       email: String
       password: String
@@ -77,10 +86,10 @@ const typeDefs = gql`
       gender: String
       bio: String
       address: String
-      image_url: String
+      imageUrl: String
     ): String
     updateUserProfile(
-      user_id: String
+      userId: String
       name: String
       email: String
       password: String
@@ -89,7 +98,7 @@ const typeDefs = gql`
       gender: String
       bio: String
       address: String
-      image_url: String
+      imageUrl: String
     ) : String
   }
 `;

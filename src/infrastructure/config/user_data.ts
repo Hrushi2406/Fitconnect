@@ -23,11 +23,11 @@ export async function seedUser(): Promise<void> {
     //CATEGORY
     const randomcategory = categories[Math.floor(Math.random() * categories.length)]
 
-    const category = `MATCH (u:User), (c:Category) WHERE u.user_id=$user_id AND c.name=$name CREATE (u)-[:OFTYPE]->(c)`;
+    const category = `MATCH (u:User), (c:Category) WHERE u.userId=$userId AND c.name=$name CREATE (u)-[:OFTYPE]->(c)`;
 
     //CREATING RELATIONHIP WITH CATEGORY
     await session.run(category, {
-      user_id: user.user_id,
+      userId: user.userId,
       name: randomcategory,
     });
 
@@ -45,7 +45,7 @@ async function createUser(): Promise<User> {
   const gender = ["Male", "Female"];
 
   const user = new User({
-    user_id: new IDGenerator().generate(),
+    userId: new IDGenerator().generate(),
     email: faker.internet.email(),
     password: await encrypter.encrypt('12345678'),
     name: faker.name.firstName() + " " + faker.name.lastName(),
@@ -59,7 +59,7 @@ async function createUser(): Promise<User> {
       faker.address.country(),
     bio: faker.lorem.paragraphs(),
     mobile: faker.phone.phoneNumber(),
-    image_url: faker.image.people(),
+    imageUrl: faker.image.people(),
   });
 
   return user;

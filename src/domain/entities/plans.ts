@@ -1,21 +1,21 @@
 export class Plan {
-  readonly plan_id: string;
+  readonly planId: string;
   readonly title: string;
   readonly type: string;
   readonly price: number;
 
   constructor({
-    plan_id,
+    planId,
     title,
     type,
     price,
   }: {
-    plan_id: string;
+    planId: string;
     title: string;
     type: string;
     price: number;
   }) {
-    this.plan_id = plan_id;
+    this.planId = planId;
     this.price = price;
     this.type = type;
     this.title = title;

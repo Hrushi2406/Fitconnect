@@ -1,33 +1,30 @@
 import { UserRepository } from "../../data_provider/repository/user_repository"
-import { IUser } from "../../application/abstracts/user_repository_interface";
+import { dependencies } from "../../infrastructure/config/dependency_injector";
 import User from "../../domain/entities/user"
 import { CustomError } from "../../application/abstracts/custom_error";
 import  db from "../../infrastructure/config/db_config";
 
 export class UserProfileController {
-  //Dependencies
-  private userRepository: UserRepository = new UserRepository(db);
-  private customError: CustomError = new CustomError();
 
   //constructor
   constructor() {}
 
   //Get Profile
-  async getUserProfile({user_id}: {user_id:string}): Promise<any> {
+  async getUserProfile({userId}: {userId:string}): Promise<User | null> {
     try {
 
       //Get user
-      const user: User | null = await this.userRepository.getUserById(user_id);
+      const user: User | null = await dependencies.userRepository.getUserById(userId);
         
       if(!user){
           return null;
       }
 
       //Return the user
-      return user.hydrate();
+      return user;
     } catch (err) {
       //Format Error Message
-      throw this.customError.throw();
+      throw dependencies.customError.throw();
     }
   }
 
@@ -36,11 +33,11 @@ export class UserProfileController {
     try {
 
       //Get user
-      await this.userRepository.updateUser(args);
+      await dependencies.userRepository.updateUser(args);
 
     } catch (err) {
       //Format Error Message
-      throw this.customError.throw();
+      throw dependencies.customError.throw();
     }
   }
 }

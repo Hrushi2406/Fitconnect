@@ -1,9 +1,13 @@
+import { Plan } from "../../domain/entities/plans";
 import { ITrainer } from "../../domain/entities/trainer"
 
 export interface ITrainerRepository {
 
     //Get trainer profile
-    getTrainerbyId: (trainer_id: string) => Promise<any>;
+    getTrainerbyId: (trainerId: string) => Promise<ITrainer | null>;
+
+    //Get trainer plans
+    getTrainerPlans: (trainerId: string) => Promise<[Plan] | null>;
 
     //Full text search & execute the query
     search: (
@@ -19,7 +23,7 @@ export interface ITrainerRepository {
       sortBy: string, 
       order: string,
       prevQuery: string,
-      ) => Promise<any>;
+      ) => Promise<[ITrainer] | null>;
   
   }
 

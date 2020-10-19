@@ -24,6 +24,9 @@ export const resolvers = {
     getTrainerProfile: (parent: any, args: any, ctx: any, info: any) => {
       return controllers.trainerService.getTrainerProfile(args);
     },
+    getTrainerPlans: (parent: any, args: any, ctx: any, info: any) => {
+      return controllers.trainerService.getTrainerPlans(args);
+    },
   },
 
   Mutation: {

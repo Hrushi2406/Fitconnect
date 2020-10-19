@@ -35,7 +35,7 @@ export class SearchUseCase {
     }
 
     if(maxPrice != -1){
-      Query += " Match (node) WHERE node.min_cost <= $maxPrice";
+      Query += " Match (node) WHERE node.startPrice <= $maxPrice";
     }
      
     if(category != ""){
@@ -43,7 +43,7 @@ export class SearchUseCase {
     }
 
     if(minRating != -1){
-      Query += " Match (node)  WHERE node.fc_rating >= $minRating";
+      Query += " Match (node)  WHERE node.fcRating >= $minRating";
     }
 
     if(gender != ""){

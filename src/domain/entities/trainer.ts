@@ -1,5 +1,5 @@
 export class Trainer {
-  readonly trainer_id: string;
+  readonly trainerId: string;
   readonly email: string;
   readonly name: string;
   readonly age: number;
@@ -9,13 +9,13 @@ export class Trainer {
   readonly category: string;
   readonly profession: string;
   readonly mobile: string;
-  readonly fc_rating: number;
+  readonly fcRating: number;
   readonly images: string[];
-  readonly min_cost: number;
+  readonly startPrice: number;
   readonly geometry: IGeometry;
 
   constructor({
-    trainer_id = "",
+    trainerId = "",
     email,
     name,
     age,
@@ -25,12 +25,12 @@ export class Trainer {
     category,
     profession,
     mobile,
-    fc_rating,
+    fcRating,
     images,
-    min_cost,
+    startPrice,
     geometry,
   }: ITrainer) {
-    this.trainer_id = trainer_id;
+    this.trainerId = trainerId;
     this.email = email;
     this.name = name;
     this.age = age;
@@ -40,15 +40,15 @@ export class Trainer {
     this.category = category;
     this.profession = profession;
     this.mobile = mobile;
-    this.fc_rating = fc_rating;
+    this.fcRating = fcRating;
     this.images = images;
-    this.min_cost = min_cost;
+    this.startPrice = startPrice;
     this.geometry = geometry;
   }
 
   hydrate() {
     return {
-      trainerId: this.trainer_id,
+      trainerId: this.trainerId,
       email: this.email,
       name: this.name,
       age: this.age,
@@ -59,15 +59,15 @@ export class Trainer {
       profession: this.profession,
       mobile: this.mobile,
       images: this.images,
-      fcRating: this.fc_rating,
-      minCost: this.min_cost,
+      fcRating: this.fcRating,
+      startPrice: this.startPrice,
       geometry: this.geometry,
     };
   }
 }
 
 export interface ITrainer {
-  trainer_id?: string;
+  trainerId?: string;
   email: string;
   name: string;
   age: number;
@@ -77,14 +77,14 @@ export interface ITrainer {
   category: string;
   profession: string;
   mobile: string;
-  fc_rating: number;
+  fcRating: number;
   images: string[];
-  min_cost: number;
+  startPrice: number;
   geometry: IGeometry;
 }
 
 interface IGeometry {
-  geometry_id: string;
+  geometryId: string;
   lat: number;
   lon: number;
   description: string;
