@@ -42,7 +42,9 @@ export class UserRegisterUseCase {
       gender, 
       bio, 
       address, 
-      imageUrl
+      imageUrl,
+      lat,
+      lon,
     }: {
       userId: string;
       name: string;
@@ -54,6 +56,8 @@ export class UserRegisterUseCase {
       bio: string;
       address: string;
       imageUrl: string;
+      lat: number;
+      lon: number;
     } = args;
 
     //Construct a new object of user
@@ -67,7 +71,9 @@ export class UserRegisterUseCase {
       gender: gender,
       bio: bio, 
       address: address,
-      imageUrl: imageUrl
+      imageUrl: imageUrl,
+      lat: lat,
+      lon: lon,
     });
 
     // await user.validate();

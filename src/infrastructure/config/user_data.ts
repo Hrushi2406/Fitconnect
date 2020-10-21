@@ -60,6 +60,8 @@ async function createUser(): Promise<User> {
     bio: faker.lorem.paragraphs(),
     mobile: faker.phone.phoneNumber(),
     imageUrl: faker.image.people(),
+    lat: parseFloat(faker.address.latitude(19.04345827558254, 18.940387062668094)),
+    lon: parseFloat(faker.address.longitude(72.88141250610352, 72.79309272766113)),
   });
 
   return user;

@@ -20,7 +20,7 @@ export async function seedTrainer(): Promise<void> {
   console.log("CREATED CATEGORY");
 
   for (let index = 0; index < 100; index++) {
-    //Creaeteing trainer
+    //Createing trainer
     const trainer = createTrainer();
 
     const query: string = `CREATE (t:Trainer {
@@ -35,7 +35,9 @@ export async function seedTrainer(): Promise<void> {
         profession:$profession,
         mobile:$mobile,
         images:$images,
-        fcRating:$fcRating
+        fcRating:$fcRating,
+        lat:$lat,
+        lon:$lon
    }) `;
 
     //ADDIING Trainer
@@ -53,26 +55,6 @@ export async function seedTrainer(): Promise<void> {
     });
 
     console.log("T --> C RELATIONSHIP CREATED");
-
-    //GEOMETRY
-
-    const createGeometry = `CREATE (g:Geometry {geometryId: $geometryId, lat: toFloat($lat), lon: toFloat($lon), description: $description}) `;
-
-    //creating geometry
-    await session.run(createGeometry, trainer.geometry);
-
-    console.log("GEOMETRY CREATED");
-
-    let geometryId = trainer.geometry.geometryId;
-
-    //RELATION WITH GEOMETRY
-    const relation = `MATCH (t:Trainer), (g:Geometry) WHERE t.trainerId = $trainerId  AND g.geometryId = $geometryId CREATE (t)-[r:LIVES]->(g) RETURN type(r)`;
-
-    const trainerId = trainer.trainerId;
-
-    await session.run(relation, { trainerId, geometryId });
-
-    console.log("T --> G RELATION CREATED");
 
     var random = Math.floor(Math.random() * (6 - 3)) + 3;
 
@@ -167,65 +149,9 @@ function createTrainer(): Trainer {
     images: [faker.image.people()],
     fcRating: Math.floor(Math.random() * (99 - 60)) + 60,
     startPrice: 1000000,
-    geometry: {
-      geometryId: new IDGenerator().generate(),
-      lat: parseFloat(
-        faker.address.latitude(19.04345827558254, 18.940387062668094)
-      ),
-      lon: parseFloat(
-        faker.address.longitude(72.88141250610352, 72.79309272766113)
-      ),
-      description: faker.address.streetName(),
-    },
+    lat: parseFloat(faker.address.latitude(19.04345827558254, 18.940387062668094)),
+    lon: parseFloat(faker.address.longitude(72.88141250610352, 72.79309272766113)),
   });
 
   return trainer;
 }
-
-// export async function seedTrainer(): Promise<void> {
-//   const gender = ["Male", "Female"];
-//   const categories = ["Workout", "Yoga", "Zumba", "Meditation"];
-
-//   const trainer = new Trainer({
-//     trainerId: new IDGenerator().generate(),
-//     email: faker.internet.email(),
-//     name: faker.name.firstName() + " " + faker.name.lastName(),
-//     age: Math.floor(Math.random() * 60) + 1,
-//     gender: gender[Math.floor(Math.random() * gender.length)],
-//     address:
-//       faker.address.streetAddress() +
-//       " " +
-//       faker.address.city() +
-//       " " +
-//       faker.address.country(),
-//     bio: faker.lorem.paragraphs(),
-//     category: categories[Math.floor(Math.random() * categories.length)],
-//     profession: faker.name.jobTitle(),
-//     mobile: faker.phone.phoneNumber(),
-//     images: [faker.image.people()],
-//     fcRating: Math.floor(Math.random() * (99 - 60)) + 60,
-//     geometry: {
-//       geometryId: new IDGenerator().generate(),
-//       lat: parseFloat(
-//         faker.address.latitude(19.04345827558254, 18.940387062668094)
-//       ),
-//       lon: parseFloat(
-//         faker.address.longitude(72.88141250610352, 72.79309272766113)
-//       ),
-//       description: faker.address.streetName(),
-//     },
-//   });
-
-//   const type = ["Weekly", "Monthly", "Daily"];
-
-//   const plans = new Plan({
-//     planId: new IDGenerator().generate(),
-//     price: Math.floor(Math.random() * (8000 - 800)) + 800,
-//     title: faker.random.words(5),
-//     type: type[Math.floor(Math.random() * type.length)],
-//   });
-
-//   console.log(plans);
-// }
-
-// seedTrainer();

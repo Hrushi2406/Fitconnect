@@ -8,12 +8,7 @@ import { ITrainer } from "./domain/entities/trainer";
 
 
 const typeDefs = gql`
-  type Geometry {
-    geometryId: String
-    lat: Float
-    lon: Float
-    description: String
-  }
+  scalar Date
   type Trainer {
     trainerId: String
     email: String
@@ -28,7 +23,8 @@ const typeDefs = gql`
     fcRating: Int
     images: [String]
     startPrice: Int
-    geometry: Geometry
+    lat: Float
+    lon: Float
   }
   type User{
     userId: String
@@ -41,12 +37,39 @@ const typeDefs = gql`
     bio: String 
     address: String
     imageUrl: String
+    lat: Float
+    lon: Float
   }
   type Plan{
     planId: String
     title: String
     type: String
     price: Int
+  }
+  type Request{
+    senderId: String
+    receiverId: String
+    planId: String
+  }
+  type Subscription{
+    price: String
+    startDate: Date
+    endDate: Date
+  }
+  type Friendship{
+    planId: String
+    paid: [String]
+  }
+  type MyTrainer{
+    plan: Plan
+    trainer: Trainer
+    sub: Subscription
+  }
+  type MyPayment{
+    plan: Plan
+    trainer: Trainer
+    partner: User
+    friendship: Friendship
   }
   type Query {
     me: String
@@ -73,6 +96,24 @@ const typeDefs = gql`
     getTrainerPlans(
       trainerId: String
     ): [Plan]
+    getPairingRequests(
+      userId: String
+    ): [Request]
+    getTrainerbyPlanId(
+      planId: String
+    ): Trainer
+    getPlanbyId(
+      planId: String
+    ): Plan
+    getTrainerRecommendation(
+      userId: String
+    ): [Trainer]
+    getMyTrainers(
+      userId: String
+    ): [MyTrainer]
+    getMyPayments(
+      userId: String
+    ): [MyPayment]
   }
   type Mutation {
     loginAsUser(email: String, password: String): String
@@ -87,6 +128,8 @@ const typeDefs = gql`
       bio: String
       address: String
       imageUrl: String
+      lat: Float
+      lon: Float
     ): String
     updateUserProfile(
       userId: String
@@ -100,6 +143,38 @@ const typeDefs = gql`
       address: String
       imageUrl: String
     ) : String
+    sendPairingRequest(
+      senderId: String
+      receiverId: String
+      planId: String
+    ) : String
+    declineRequest(
+      senderId: String
+      receiverId: String
+      planId: String
+    ) : String
+    acceptRequest(
+      senderId: String
+      receiverId: String
+      planId: String
+    ) : String
+    subscribe(
+      userId: String
+      planId: String
+      duration: String
+      price: Int
+    ): String
+    payInPair(
+      payeeId: String
+      partnerId: String
+      planId: String
+      duration: String
+      price: Int
+    ): String
+    addUserInterests(
+      userId: String
+      interests: [String]
+    ): String
   }
 `;
 

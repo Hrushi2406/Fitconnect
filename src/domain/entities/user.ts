@@ -11,6 +11,8 @@ class User implements IUser {
   readonly bio: string;
   readonly address: string;
   readonly imageUrl: string;
+  readonly lat: number;
+  readonly lon: number;
 
   //constructor
   constructor({
@@ -23,7 +25,9 @@ class User implements IUser {
     gender, 
     bio, 
     address, 
-    imageUrl
+    imageUrl,
+    lat,
+    lon,
   }: {
     userId?: string;
     name: string;
@@ -35,6 +39,8 @@ class User implements IUser {
     bio: string;
     address: string;
     imageUrl: string;
+    lat: number;
+    lon: number;
   }) {
     this.userId = userId;
     this.name = name;
@@ -46,6 +52,8 @@ class User implements IUser {
     this.bio = bio;
     this.address = address;
     this.imageUrl = imageUrl;
+    this.lat = lat;
+    this.lon = lon;
   }
 
   //Serialize data

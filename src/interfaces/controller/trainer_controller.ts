@@ -1,20 +1,13 @@
 import { dependencies } from "../../infrastructure/config/dependency_injector";
 import { IDependencies } from "../../application/abstracts/dependencies_interface";
-import { SearchUseCase } from "../../application/use_cases/trainer_services/search_use_case"; 
+import { ITrainer } from "../../domain/entities/trainer";
 import { Trainer } from "../../domain/entities/trainer";
 import { Plan } from "../../domain/entities/plans";
 
 export class TrainerController {
-  //UseCases
-  private searchUseCase: SearchUseCase;
 
   //constructor
-  constructor(public dependencies: IDependencies) {
-    this.searchUseCase = new SearchUseCase(
-      dependencies.trainerRepository,
-      dependencies.customError
-    );
-  }
+  constructor(public dependencies: IDependencies) {}
 
   async getTrainerProfile({trainerId}: {trainerId: string}): Promise<Trainer | null> {
     try {
@@ -29,11 +22,53 @@ export class TrainerController {
     }
   }
 
+  //Get trainer by planId
+  async getTrainerbyPlanId({planId}: {planId: string}): Promise<Trainer | null> {
+    try {
+      //Get result from search use case
+      const result: any = await dependencies.trainerRepository.getTrainerbyPlanId(planId);
+
+      //Return the result
+      return result;
+    } catch (err) {
+      //Format Error Message
+      throw this.dependencies.customError.throw();
+    }
+  }
+
+  //Get plan by planId
+  async getPlanbyId({planId}: {planId: string}): Promise<Plan | null> {
+    try {
+      //Get result from search use case
+      const result: Plan | null = await dependencies.trainerRepository.getPlanbyId(planId);
+
+      //Return the result
+      return result;
+    } catch (err) {
+      //Format Error Message
+      throw this.dependencies.customError.throw();
+    }
+  }
+
   //Get plans by trainerId
   async getTrainerPlans({trainerId}: {trainerId: string}): Promise<[Plan] | null> {
     try {
       //Get result from search use case
       const result: [Plan] | null = await dependencies.trainerRepository.getTrainerPlans(trainerId);
+
+      //Return the result
+      return result;
+    } catch (err) {
+      //Format Error Message
+      throw this.dependencies.customError.throw();
+    }
+  }
+
+  //Get recommended Trainers
+  async getTrainerRecommendation({userId}: {userId: string}): Promise<[ITrainer] | null> {
+    try {
+      //Get result from repository
+      const result = await dependencies.trainerRepository.recommendTrainers(userId);
 
       //Return the result
       return result;
@@ -71,7 +106,7 @@ export class TrainerController {
   }): Promise<[Trainer] | null> {
     try {
       //Get result from search use case
-      const result: any = await this.searchUseCase.execute(
+      const result: any = await this.dependencies.trainerRepository.searchTrainers(
         userLat,
         userLong,
         maxDistance,
@@ -80,9 +115,9 @@ export class TrainerController {
         minRating,
         gender,
         age,
+        keyword,
         sortBy,
         order,
-        keyword
       );
 
       //Return the result

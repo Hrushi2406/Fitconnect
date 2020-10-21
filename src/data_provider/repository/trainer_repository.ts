@@ -7,12 +7,12 @@ export class TrainerRepository implements ITrainerRepository {
   //Construtor
   constructor(public db: Driver) { }
 
-  //Get trainer profile
+  //Get trainer profile by trainerId
   async getTrainerbyId(trainerId: string): Promise<Trainer | null> {
     try {
       const session = this.db.session();
 
-      const cypher: string = "Match ( t:Trainer { trainerId: $trainerId } )-[:LIVES]->( l:Geometry ) return t,l";
+      const cypher: string = "Match ( t:Trainer { trainerId: $trainerId } ) return t";
       const result = await session.run(cypher, { trainerId: trainerId });
 
       session.close();
@@ -21,34 +21,59 @@ export class TrainerRepository implements ITrainerRepository {
         return null;
       }
 
-      const record = result.records[0];
-
-      const geometry = {
-        geometryId: record.get("l").properties.geometryId,
-        lat: record.get("l").properties.lat,
-        lon: record.get("l").properties.lon,
-        description: record.get("l").properties.description,
-      }
-
-      const trainer = new Trainer({
-        trainerId: record.get("t").properties.trainerId,
-        email: record.get("t").properties.email,
-        name: record.get("t").properties.name,
-        age: record.get("t").properties.age,
-        gender: record.get("t").properties.gender,
-        address: record.get("t").properties.address,
-        bio: record.get("t").properties.bio,
-        category: record.get("t").properties.category,
-        profession: record.get("t").properties.profession,
-        mobile: record.get("t").properties.mobile,
-        fcRating: record.get("t").properties.fcRating,
-        images: record.get("t").properties.images,
-        startPrice: record.get("t").properties.startPrice,
-        geometry: geometry,
-      })
+      const trainer = new Trainer(result.records[0].get("t").properties);
 
       return trainer;
 
+    } catch (err) {
+      console.log("Database error: ", err.message);
+
+      throw "Something went wrong";
+    }
+  }
+
+    //Get trainer profile by planId
+    async getTrainerbyPlanId(planId: string): Promise<Trainer | null> {
+      try {
+        const session = this.db.session();
+  
+        const cypher: string = "Match ( p:Plan { planId: $planId } )<-[:HAS]-(t:Trainer) Return t";
+        const result = await session.run(cypher, { planId });
+  
+        session.close();
+  
+        if (result.records.length == 0) {
+          return null;
+        }
+  
+        const trainer = new Trainer(result.records[0].get("t").properties);
+  
+        return trainer;
+  
+      } catch (err) {
+        console.log("Database error: ", err.message);
+  
+        throw "Something went wrong";
+      }
+    }
+  
+  //Get plan by planId
+  async getPlanbyId(planId: string): Promise<Plan | null> {
+    try {
+      const session = this.db.session();
+
+      const cypher: string = "Match (p:Plan {planId:$planId} ) return p";
+      const result = await session.run(cypher, { planId });
+
+      session.close();
+
+      if (result.records.length == 0) {
+        return null;
+      }
+
+      const plan = new Plan(result.records[0].get("p").properties);
+
+      return plan;
     } catch (err) {
       console.log("Database error: ", err.message);
 
@@ -84,8 +109,36 @@ export class TrainerRepository implements ITrainerRepository {
     }
   }
 
-  //Full text search & execute the query
-  async search(
+  //Get trainers recommended to userId by his interests
+  async recommendTrainers (userId: string): Promise<[ITrainer] | null>{
+    try {
+      const session = this.db.session();
+
+      const cypher: string = "Match (u:User {userId:$userId}) Match (u)-[:OFTYPE]->( c:Category )<-[:OFTYPE]-(t:Trainer) return t";
+      const result = await session.run(cypher, { userId });
+
+      session.close();
+
+      if (result.records.length == 0) {
+        return null;
+      }
+
+      var trainerList : any = [];
+      result.records.map((record)=>{
+        const trainer = new Trainer(record.get("t").properties);
+        trainerList.push(trainer);
+      })
+
+      return trainerList;
+    } catch (err) {
+      console.log("Database error: ", err.message);
+
+      throw "Something went wrong";
+    }
+  }
+
+  //Full text search for trainers
+  async searchTrainers(
     userLat: number,
     userLong: number,
     maxDistance: number,
@@ -97,17 +150,55 @@ export class TrainerRepository implements ITrainerRepository {
     keyword: string,
     sortBy: string,
     order: string,
-    prevQuery: string,
   ): Promise<[Trainer] | null> {
 
-    var str: string = "";
+    // Queries for all applied filters
+    var filterQuery: string = ""; 
 
-    if (sortBy != "") {
-      str = "ORDER BY node." + sortBy + " " + order;
+    if(maxDistance != -1){
+      filterQuery += " Match (node) with distance(point({ latitude:$userLat, longitude:$userLong }), point({ latitude: node.lat, longitude: node.lon })) as dist, node as node where dist < $maxDistance";
     }
 
-    //Complete query with FULL TEXT SEARCH
-    const finalQuery = "CALL db.index.fulltext.queryNodes('trainer_index', '" + keyword + "') YIELD node " + prevQuery + " Match (node)-[:LIVES]->(l:Geometry) RETURN node, l " + str;
+    if(maxPrice != -1){
+      filterQuery += " Match (node) WHERE node.startPrice <= $maxPrice";
+    }
+     
+    if(category != ""){
+      filterQuery += " Match (node)-[:OFTYPE]->( c:Category{ name:$category } )";
+    }
+
+    if(minRating != -1){
+      filterQuery += " Match (node)  WHERE node.fcRating >= $minRating";
+    }
+
+    if(gender != ""){
+      filterQuery += " Match (node)  WHERE node.gender = $gender";
+    }
+    
+    if(age != -1){
+      filterQuery += " Match (node) WHERE node.age <= $age";
+    }
+
+    // Query based on search keyword
+    var keywordQuery: string = "";
+    
+    if(keyword == ""){
+      keywordQuery = "Match (node:Trainer) "
+    }else{
+      keywordQuery = "CALL db.index.fulltext.queryNodes('trainer_index', '" + keyword + "') YIELD node "
+    }
+
+    // Query if sortBy applied
+    var sortQuery: string = "";
+
+    if(sortBy == "dist") {
+      sortQuery = ", dist ORDER BY dist "+ order;
+    }else if (sortBy != "") {
+      sortQuery = " ORDER BY node." + sortBy + " " + order;
+    }
+
+    //Complete query filters, Full text Search & sorting
+    const finalQuery = keywordQuery + filterQuery + " RETURN node" + sortQuery;
 
     try {
       const session = this.db.session();
@@ -120,10 +211,7 @@ export class TrainerRepository implements ITrainerRepository {
         category: category,
         minRating: minRating,
         gender: gender,
-        age: age,
-        keyword: keyword,
-        sortBy: sortBy,
-        order: order
+        age: age
       });
 
       session.close();
@@ -132,29 +220,7 @@ export class TrainerRepository implements ITrainerRepository {
 
       result.records.map((record) => {
 
-        const geometry = {
-          geometryId: record.get("l").properties.geometryId,
-          lat: record.get("l").properties.lat,
-          lon: record.get("l").properties.lon,
-          description: record.get("l").properties.description,
-        }
-
-        const trainer = new Trainer({
-          trainerId: record.get("node").properties.trainerId,
-          email: record.get("node").properties.email,
-          name: record.get("node").properties.name,
-          age: record.get("node").properties.age,
-          gender: record.get("node").properties.gender,
-          address: record.get("node").properties.address,
-          bio: record.get("node").properties.bio,
-          category: record.get("node").properties.category,
-          profession: record.get("node").properties.profession,
-          mobile: record.get("node").properties.mobile,
-          fcRating: record.get("node").properties.fcRating,
-          images: record.get("node").properties.images,
-          startPrice: record.get("node").properties.startPrice,
-          geometry: geometry,
-        })
+        const trainer = new Trainer(record.get("node").properties)
 
         trainerList.push(trainer);
       })

@@ -12,7 +12,8 @@ export class Trainer {
   readonly fcRating: number;
   readonly images: string[];
   readonly startPrice: number;
-  readonly geometry: IGeometry;
+  readonly lat: number;
+  readonly lon: number;
 
   constructor({
     trainerId = "",
@@ -28,7 +29,8 @@ export class Trainer {
     fcRating,
     images,
     startPrice,
-    geometry,
+    lat,
+    lon,
   }: ITrainer) {
     this.trainerId = trainerId;
     this.email = email;
@@ -43,27 +45,27 @@ export class Trainer {
     this.fcRating = fcRating;
     this.images = images;
     this.startPrice = startPrice;
-    this.geometry = geometry;
+    this.lat = lat;
+    this.lon = lon;
   }
 
-  hydrate() {
-    return {
-      trainerId: this.trainerId,
-      email: this.email,
-      name: this.name,
-      age: this.age,
-      gender: this.gender,
-      address: this.address,
-      bio: this.bio,
-      category: this.category,
-      profession: this.profession,
-      mobile: this.mobile,
-      images: this.images,
-      fcRating: this.fcRating,
-      startPrice: this.startPrice,
-      geometry: this.geometry,
-    };
-  }
+//   hydrate() {
+//     return {
+//       trainerId: this.trainerId,
+//       email: this.email,
+//       name: this.name,
+//       age: this.age,
+//       gender: this.gender,
+//       address: this.address,
+//       bio: this.bio,
+//       category: this.category,
+//       profession: this.profession,
+//       mobile: this.mobile,
+//       images: this.images,
+//       fcRating: this.fcRating,
+//       startPrice: this.startPrice,
+//     };
+//   }
 }
 
 export interface ITrainer {
@@ -80,12 +82,13 @@ export interface ITrainer {
   fcRating: number;
   images: string[];
   startPrice: number;
-  geometry: IGeometry;
-}
-
-interface IGeometry {
-  geometryId: string;
   lat: number;
   lon: number;
-  description: string;
 }
+
+// interface IGeometry {
+//   geometryId: string;
+//   lat: number;
+//   lon: number;
+//   description: string;
+// }
