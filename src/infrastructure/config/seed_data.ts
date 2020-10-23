@@ -67,8 +67,8 @@ export async function seedTrainer(): Promise<void> {
       //create a plan
       var plan = createPlan();
 
-      if(minimum > plan.price){
-        minimum = plan.price 
+      if (minimum > plan.price) {
+        minimum = plan.price;
       }
 
       //query
@@ -101,10 +101,11 @@ export async function seedTrainer(): Promise<void> {
     console.log("ASSIGNED MIN COST OF PLAN");
   }
   //CREATE INDEX QUERY
-  const index = "CALL db.index.fulltext.createNodeIndex('trainer_index', ['Trainer'], ['name', 'address', 'bio', 'category'])";
+  const index =
+    "CALL db.index.fulltext.createNodeIndex('trainer_index', ['Trainer'], ['name', 'address', 'bio', 'category'])";
 
   //CREATE INDEX
-  await session.run(index);
+  // await session.run(index);
 
   console.log("CREATED INDEX ON TRAINER");
 
@@ -149,8 +150,12 @@ function createTrainer(): Trainer {
     images: [faker.image.people()],
     fcRating: Math.floor(Math.random() * (99 - 60)) + 60,
     startPrice: 1000000,
-    lat: parseFloat(faker.address.latitude(19.04345827558254, 18.940387062668094)),
-    lon: parseFloat(faker.address.longitude(72.88141250610352, 72.79309272766113)),
+    lat: parseFloat(
+      faker.address.latitude(19.04345827558254, 18.940387062668094)
+    ),
+    lon: parseFloat(
+      faker.address.longitude(72.88141250610352, 72.79309272766113)
+    ),
   });
 
   return trainer;

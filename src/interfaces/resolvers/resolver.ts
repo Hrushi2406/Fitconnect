@@ -5,13 +5,13 @@ import { dependencies } from "../../infrastructure/config/dependency_injector";
 import { seedTrainer } from "../../infrastructure/config/seed_data";
 import { seedUser } from "../../infrastructure/config/user_data";
 
-import { GraphQLScalarType } from 'graphql';
-import { Kind } from 'graphql/language';
+import { GraphQLScalarType } from "graphql";
+import { Kind } from "graphql/language";
 
 export const resolvers = {
   Date: new GraphQLScalarType({
-    name: 'Date',
-    description: 'Date custom scalar type',
+    name: "Date",
+    description: "Date custom scalar type",
     parseValue(value) {
       return new Date(value); // value from the client
     },
@@ -69,6 +69,7 @@ export const resolvers = {
 
   Mutation: {
     loginAsUser: (parent: any, args: any, ctx: any, info: any) => {
+      console.log(ctx);
       return controllers.userAuthService.login(args);
     },
     registerAsUser: (parent: any, args: any, ctx: any, info: any) => {
@@ -100,7 +101,7 @@ export const resolvers = {
     },
     addUserInterests: (parent: any, args: any, ctx: any, info: any) => {
       controllers.userService.addUserInterests(args);
-      return "Added"
+      return "Added";
     },
   },
 };

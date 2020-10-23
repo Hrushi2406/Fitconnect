@@ -5,7 +5,7 @@ dotenv.config();
 import { ApolloServer, gql } from "apollo-server";
 import { resolvers } from "./interfaces/resolvers/resolver";
 import { ITrainer } from "./domain/entities/trainer";
-
+import auth from "./interfaces/middleware/auth";
 
 const typeDefs = gql`
   scalar Date
@@ -26,7 +26,7 @@ const typeDefs = gql`
     lat: Float
     lon: Float
   }
-  type User{
+  type User {
     userId: String
     name: String
     email: String
@@ -34,38 +34,38 @@ const typeDefs = gql`
     mobile: String
     age: Int
     gender: String
-    bio: String 
+    bio: String
     address: String
     imageUrl: String
     lat: Float
     lon: Float
   }
-  type Plan{
+  type Plan {
     planId: String
     title: String
     type: String
     price: Int
   }
-  type Request{
+  type Request {
     senderId: String
     receiverId: String
     planId: String
   }
-  type Subscription{
+  type Subscription {
     price: String
     startDate: Date
     endDate: Date
   }
-  type Friendship{
+  type Friendship {
     planId: String
     paid: [String]
   }
-  type MyTrainer{
+  type MyTrainer {
     plan: Plan
     trainer: Trainer
     sub: Subscription
   }
-  type MyPayment{
+  type MyPayment {
     plan: Plan
     trainer: Trainer
     partner: User
@@ -87,33 +87,15 @@ const typeDefs = gql`
       order: String
       keyword: String
     ): [Trainer]
-    getUserProfile(
-      userId: String
-    ): User
-    getTrainerProfile(
-      trainerId: String
-    ): Trainer
-    getTrainerPlans(
-      trainerId: String
-    ): [Plan]
-    getPairingRequests(
-      userId: String
-    ): [Request]
-    getTrainerbyPlanId(
-      planId: String
-    ): Trainer
-    getPlanbyId(
-      planId: String
-    ): Plan
-    getTrainerRecommendation(
-      userId: String
-    ): [Trainer]
-    getMyTrainers(
-      userId: String
-    ): [MyTrainer]
-    getMyPayments(
-      userId: String
-    ): [MyPayment]
+    getUserProfile(userId: String): User
+    getTrainerProfile(trainerId: String): Trainer
+    getTrainerPlans(trainerId: String): [Plan]
+    getPairingRequests(userId: String): [Request]
+    getTrainerbyPlanId(planId: String): Trainer
+    getPlanbyId(planId: String): Plan
+    getTrainerRecommendation(userId: String): [Trainer]
+    getMyTrainers(userId: String): [MyTrainer]
+    getMyPayments(userId: String): [MyPayment]
   }
   type Mutation {
     loginAsUser(email: String, password: String): String
@@ -142,22 +124,14 @@ const typeDefs = gql`
       bio: String
       address: String
       imageUrl: String
-    ) : String
+    ): String
     sendPairingRequest(
       senderId: String
       receiverId: String
       planId: String
-    ) : String
-    declineRequest(
-      senderId: String
-      receiverId: String
-      planId: String
-    ) : String
-    acceptRequest(
-      senderId: String
-      receiverId: String
-      planId: String
-    ) : String
+    ): String
+    declineRequest(senderId: String, receiverId: String, planId: String): String
+    acceptRequest(senderId: String, receiverId: String, planId: String): String
     subscribe(
       userId: String
       planId: String
@@ -171,10 +145,7 @@ const typeDefs = gql`
       duration: String
       price: Int
     ): String
-    addUserInterests(
-      userId: String
-      interests: [String]
-    ): String
+    addUserInterests(userId: String, interests: [String]): String
   }
 `;
 
@@ -183,6 +154,10 @@ const typeDefs = gql`
 const server = new ApolloServer({
   typeDefs,
   resolvers,
+  context: ({ req }) => {
+    const user = auth(req);
+    return { user };
+  },
 });
 
 server

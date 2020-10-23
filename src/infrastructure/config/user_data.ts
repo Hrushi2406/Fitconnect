@@ -1,7 +1,7 @@
 import { attachDirectiveResolvers } from "apollo-server";
 import faker from "faker";
 import User from "../../domain/entities/user";
-import { Encrypter } from "../../infrastructure/security/encrypter"
+import { Encrypter } from "../../infrastructure/security/encrypter";
 import { IDGenerator } from "../core/id_generator";
 import driver from "./db_config";
 import { UserRepository } from "../../data_provider/repository/user_repository";
@@ -18,26 +18,43 @@ export async function seedUser(): Promise<void> {
     //ADDIING User
     await userRepository.registerUser(user);
 
+    var n = Math.floor(Math.random() * categories.length) + 1;
+    var randomCategory = categories.sort(() => 0.5 - Math.random()).slice(0, n);
+
     console.log(index, " USERS CREATED");
 
     //CATEGORY
-    const randomcategory = categories[Math.floor(Math.random() * categories.length)]
+    const randomcategory =
+      categories[Math.floor(Math.random() * categories.length)];
 
-    const category = `MATCH (u:User), (c:Category) WHERE u.userId=$userId AND c.name=$name CREATE (u)-[:OFTYPE]->(c)`;
+    let query = "MATCH (u:User), (c:Category) WHERE u.userId=$userId AND";
 
-    //CREATING RELATIONHIP WITH CATEGORY
-    await session.run(category, {
-      userId: user.userId,
-      name: randomcategory,
-    });
+    // randomCategory.map((c, i) => {
+    //   let arr = query.split(" ");
+    //   if (arr[arr.length - 1] == "AND") {
+    //     query = query + " c.name='" + c + "'";
+    //   } else {
+    //     query = query + " OR c.name='" + c + "'";
+    //   }
+    // });
 
-    console.log("U --> C RELATIONSHIP CREATED");
-    
+    for (let j = 0; j < randomCategory.length; j++) {
+      const category = `MATCH (u:User), (c:Category) WHERE u.userId=$userId AND c.name=$name CREATE (u)-[:OFTYPE]->(c)`;
+      //CREATING RELATIONHIP WITH CATEGORY
+      await session.run(category, {
+        userId: user.userId,
+        name: randomCategory[j],
+      });
     }
 
-    console.log("ADDED USERS SUCCESSFULLY");
+    // query = query + " CREATE (u)-[:OFTYPE]->(c)";
 
-    session.close();
+    console.log("U --> C RELATIONSHIP CREATED");
+  }
+
+  console.log("ADDED USERS SUCCESSFULLY");
+
+  session.close();
 }
 
 async function createUser(): Promise<User> {
@@ -47,7 +64,7 @@ async function createUser(): Promise<User> {
   const user = new User({
     userId: new IDGenerator().generate(),
     email: faker.internet.email(),
-    password: await encrypter.encrypt('12345678'),
+    password: await encrypter.encrypt("12345678"),
     name: faker.name.firstName() + " " + faker.name.lastName(),
     age: Math.floor(Math.random() * 60) + 1,
     gender: gender[Math.floor(Math.random() * gender.length)],
@@ -60,10 +77,13 @@ async function createUser(): Promise<User> {
     bio: faker.lorem.paragraphs(),
     mobile: faker.phone.phoneNumber(),
     imageUrl: faker.image.people(),
-    lat: parseFloat(faker.address.latitude(19.04345827558254, 18.940387062668094)),
-    lon: parseFloat(faker.address.longitude(72.88141250610352, 72.79309272766113)),
+    lat: parseFloat(
+      faker.address.latitude(19.04345827558254, 18.940387062668094)
+    ),
+    lon: parseFloat(
+      faker.address.longitude(72.88141250610352, 72.79309272766113)
+    ),
   });
 
   return user;
 }
-
