@@ -47,101 +47,108 @@ export const resolvers = {
     },
 
     //Returns user profile
-    me: (parent: any, args: any, ctx: any, info: any) => {
-      return controllers.userService.getUserProfile(ctx);
+    me: async (parent: any, args: any, ctx: any, info: any) => {
+      return await controllers.userService.getUserProfile(ctx);
     },
 
     //Returns recommendations for trainers based on their intrests
-    recommendations: (parent: any, args: any, ctx: any, info: any) => {
-      return controllers.trainerService.getTrainerRecommendation(ctx);
+    recommendations: async (parent: any, args: any, ctx: any, info: any) => {
+      return await controllers.trainerService.getTrainerRecommendation(ctx);
     },
 
     //Returns trainers profile
-    trainer: (parent: any, args: any, ctx: any, info: any) => {
-      return controllers.trainerService.getTrainerProfile(args);
+    trainer: async (parent: any, args: any, ctx: any, info: any) => {
+      return await controllers.trainerService.getTrainerProfile(args);
     },
 
     //Returns my current + previous trainers
-    myTrainers: (parent: any, args: any, ctx: any, info: any) => {
-      return controllers.userService.getMyTrainers(ctx);
+    myTrainers: async (parent: any, args: any, ctx: any, info: any) => {
+      return await controllers.userService.getMyTrainers(ctx);
     },
 
-    searchTrainer: (parent: any, args: any, ctx: any, info: any) => {
-      return controllers.trainerService.filterAndSearch(args);
+    //Returns pending pairing requests
+    pairingRequests: (parent: any, args: any, ctx: any, info: any) => {
+      return controllers.userService.getPairingRequests(ctx);
     },
 
-    // getUserProfile: (parent: any, args: any, ctx: any, info: any) => {
-    //   return controllers.userService.getUserProfile(args);
-    // },
-
-    getPairingRequests: (parent: any, args: any, ctx: any, info: any) => {
-      return controllers.userService.getPairingRequests(args);
-    },
-    getTrainerbyPlanId: (parent: any, args: any, ctx: any, info: any) => {
-      return controllers.trainerService.getTrainerbyPlanId(args);
-    },
-    getPlanbyId: (parent: any, args: any, ctx: any, info: any) => {
-      return controllers.trainerService.getPlanbyId(args);
+    //Return pending and previous payments
+    myPayments: (parent: any, args: any, ctx: any, info: any) => {
+      return controllers.userService.getMyPayments(ctx);
     },
 
-    getMyTrainers: (parent: any, args: any, ctx: any, info: any) => {
-      return controllers.userService.getMyTrainers(args);
+    //Search and filter trainers
+    searchTrainer: async (parent: any, args: any, ctx: any, info: any) => {
+      return await controllers.trainerService.filterAndSearch(args);
     },
-    getMyPayments: (parent: any, args: any, ctx: any, info: any) => {
-      return controllers.userService.getMyPayments(args);
+
+    //search and filters users
+    filterUsers: async (parent: any, args: any, ctx: any, info: any) => {
+      return await controllers.userService.filter(args);
     },
   },
 
   //Mutations
   Mutation: {
     //Login Usres
-    loginAsUser: (parent: any, args: any, ctx: any, info: any) => {
-      return controllers.userAuthService.login(args);
+    loginAsUser: async (parent: any, args: any, ctx: any, info: any) => {
+      return await controllers.userAuthService.login(args);
     },
 
     //Register users
-    registerAsUser: (parent: any, args: any, ctx: any, info: any) => {
-      return controllers.userAuthService.register(args);
+    registerAsUser: async (parent: any, args: any, ctx: any, info: any) => {
+      return await controllers.userAuthService.register(args);
     },
 
     //Add user interests
-    addInterests: (parent: any, args: any, ctx: any, info: any) => {
+    addInterests: async (parent: any, args: any, ctx: any, info: any) => {
       //Assign userId to args objett
       args.userId = ctx.userId;
-      controllers.userService.addUserInterests(args);
+      await controllers.userService.addUserInterests(args);
 
       return "Added";
     },
 
     //Subscribe to a plan
-    subscribe: (parent: any, args: any, ctx: any, info: any) => {
+    subscribe: async (parent: any, args: any, ctx: any, info: any) => {
       //Assign userId to args objett
       args.userId = ctx.userId;
-      controllers.userService.subscribe(args);
+      await controllers.userService.subscribe(args);
 
       return "Subscribed";
+    },
+
+    //Send pairing request
+    sendRequest: async (parent: any, args: any, ctx: any, info: any) => {
+      args.senderId = ctx.userId;
+      await controllers.userService.sendPairingRequest(args);
+      return "Request Sent";
+    },
+
+    //Decline pairing request
+    declineRequest: async (parent: any, args: any, ctx: any, info: any) => {
+      args.receiverId = ctx.userId;
+      await controllers.userService.declineRequest(args);
+      return "Request Declined";
+    },
+
+    //Accept Pairing requests
+    acceptRequest: async (parent: any, args: any, ctx: any, info: any) => {
+      args.receiverId = ctx.userId;
+      await controllers.userService.acceptRequest(args);
+      return "Request Accepted";
+    },
+
+    //Paying with discounted amount
+    payInPair: async (parent: any, args: any, ctx: any, info: any) => {
+      args.payeeId = ctx.userId;
+
+      await controllers.userService.payInPair(args);
+      return "Paid";
     },
 
     updateUserProfile: (parent: any, args: any, ctx: any, info: any) => {
       controllers.userService.updateUserProfile(args);
       return "Updated";
-    },
-    sendPairingRequest: (parent: any, args: any, ctx: any, info: any) => {
-      controllers.userService.sendPairingRequest(args);
-      return "Request Sent";
-    },
-    declineRequest: (parent: any, args: any, ctx: any, info: any) => {
-      controllers.userService.declineRequest(args);
-      return "Request Declined";
-    },
-    acceptRequest: (parent: any, args: any, ctx: any, info: any) => {
-      controllers.userService.acceptRequest(args);
-      return "Request Accepted";
-    },
-
-    payInPair: (parent: any, args: any, ctx: any, info: any) => {
-      controllers.userService.payInPair(args);
-      return "Paid";
     },
   },
 };

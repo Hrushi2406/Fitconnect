@@ -145,7 +145,7 @@ export class UserRepository implements IUserRepository {
       const session = this.db.session();
 
       const cypher: string =
-        "Match (u:User)-[r:REQUESTED]->(v:User{userId:$userId}) Return u, r";
+        "Match (u:User)-[r:REQUESTED]->(v:User{userId:$userId}) Match (p:Plan {planId:r.planId}) Match(t:Trainer)-[:HAS]-(p) Return u,p,t";
       const result = await session.run(cypher, { userId: userId });
 
       session.close();
@@ -158,9 +158,10 @@ export class UserRepository implements IUserRepository {
 
       result.records.map((record) => {
         const req = new Request({
-          senderId: record.get("u").properties.userId,
+          sender: record.get("u").properties,
+          trainer: record.get("t").properties,
           receiverId: userId,
-          planId: record.get("r").properties.planId,
+          forPlan: record.get("p").properties,
         });
 
         reqList.push(req);
@@ -175,7 +176,15 @@ export class UserRepository implements IUserRepository {
   }
 
   //Send pairing request
-  async sendRequest({ senderId, receiverId, planId }: Request): Promise<void> {
+  async sendRequest({
+    senderId,
+    receiverId,
+    planId,
+  }: {
+    senderId: string;
+    receiverId: string;
+    planId: string;
+  }): Promise<void> {
     try {
       const session = this.db.session();
 
@@ -196,14 +205,23 @@ export class UserRepository implements IUserRepository {
     senderId,
     receiverId,
     planId,
-  }: Request): Promise<void> {
+  }: {
+    senderId: string;
+    receiverId: string;
+    planId: string;
+  }): Promise<void> {
     //RECEIVER Id = CURRENT USER
     try {
       const session = this.db.session();
 
       const cypher: string =
         "Match (u:User{userId:$senderId})-[r:REQUESTED{planId:$planId}]->(v:User{userId:$receiverId}) Delete r";
-      await session.run(cypher, { senderId, receiverId, planId });
+
+      await session.run(cypher, {
+        senderId,
+        receiverId,
+        planId,
+      });
 
       session.close();
     } catch (err) {
@@ -218,7 +236,11 @@ export class UserRepository implements IUserRepository {
     senderId,
     receiverId,
     planId,
-  }: Request): Promise<void> {
+  }: {
+    senderId: string;
+    receiverId: string;
+    planId: string;
+  }): Promise<void> {
     //RECEIVER Id = CURRENT USER
     try {
       const session = this.db.session();
@@ -258,8 +280,8 @@ export class UserRepository implements IUserRepository {
       const eDate = Math.floor(endDate.getDate());
 
       const cypher: string =
-        "Match (u:User {userId:$userId} ) Match (p:Plan {planId:$planId} ) Create (u)-[:SUBSCRIBED {startDate: date(), endDate:date({year:apoc.convert.toInteger($eYear), month:apoc.convert.toInteger($eMonth), day:apoc.convert.toInteger($eDate)}), price:$price}]->(p)";
-      await session.run(cypher, {
+        "Match (u:User {userId:$userId} ) Match (p:Plan {planId:$planId} ) Create (u)-[:SUBSCRIBED {startDate: date(), endDate:date({year:apoc.convert.toInteger($eYear), month:apoc.convert.toInteger($eMonth), day:apoc.convert.toInteger($eDate)}), price:$price}]->(p) ";
+      const result = await session.run(cypher, {
         userId,
         planId,
         eYear,
@@ -356,7 +378,7 @@ export class UserRepository implements IUserRepository {
 
       result.records.map((record) => {
         const myTrainer = new MyTrainer({
-          plan: new Plan(record.get("p").properties),
+          forPlan: new Plan(record.get("p").properties),
           trainer: new Trainer(record.get("t").properties),
           sub: new Subscription(record.get("s").properties),
         });
@@ -391,7 +413,7 @@ export class UserRepository implements IUserRepository {
 
       result.records.map((record) => {
         const myPayment = new MyPayment({
-          plan: new Plan(record.get("p").properties),
+          forPlan: new Plan(record.get("p").properties),
           trainer: new Trainer(record.get("t").properties),
           partner: new User(record.get("v").properties),
           friendship: new Friendship(record.get("f").properties),
@@ -403,6 +425,86 @@ export class UserRepository implements IUserRepository {
       return myPaymentList;
     } catch (err) {
       console.log("Database error: ", err.message);
+
+      throw "Something went wrong";
+    }
+  }
+
+  async filterUsers(
+    userLat: number,
+    userLong: number,
+    maxDistance: number,
+    category: string[],
+    gender: string,
+    age: number,
+    sortBy: string,
+    order: string
+  ): Promise<User[]> {
+    // Queries for all applied filters
+    var filterQuery: string = "Match (n:User)";
+
+    if (maxDistance != -1) {
+      //Convert km into meters
+      maxDistance = maxDistance * 1000;
+      //Max distance is in meters
+      filterQuery +=
+        " Match (n) with distance(point({ latitude:$userLat, longitude:$userLong }), point({ latitude: n.lat, longitude: n.lon })) as dist, n as n where dist < $maxDistance";
+    }
+
+    if (category.length !== 0) {
+      filterQuery +=
+        " Match (n)-[:OFTYPE]->( c:Category ) WHERE c.name IN $category";
+    }
+
+    if (gender != "") {
+      filterQuery += " Match (n)  WHERE n.gender = $gender";
+    }
+
+    if (age != -1) {
+      filterQuery += " Match (n) WHERE n.age <= $age";
+    }
+
+    // Query if sortBy applied
+    var sortQuery: string = "";
+
+    if (sortBy == "dist") {
+      sortQuery = ", dist ORDER BY dist " + order;
+    } else if (sortBy != "") {
+      sortQuery = " ORDER BY n." + sortBy + " " + order;
+    }
+
+    //Complete query filters, & sorting
+    const finalQuery = filterQuery + " RETURN n" + sortQuery;
+
+    try {
+      const session = this.db.session();
+
+      const result = await session.run(finalQuery, {
+        userLat: userLat,
+        userLong: userLong,
+        maxDistance: maxDistance,
+        category: category,
+        gender: gender,
+        age: age,
+      });
+
+      session.close();
+
+      let usersList: User[] = [];
+
+      if (result.records.length == 0) {
+        return usersList;
+      }
+
+      result.records.map((record) => {
+        const users = new User(record.get("n").properties);
+
+        usersList.push(users);
+      });
+
+      return usersList;
+    } catch (err) {
+      console.log("Database error in trainer repository: ", err.message);
 
       throw "Something went wrong";
     }

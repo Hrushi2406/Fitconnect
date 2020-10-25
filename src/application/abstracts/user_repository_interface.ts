@@ -1,5 +1,6 @@
 import { MyPayment, MyTrainer } from "../../domain/return_types";
 import Request from "../../domain/relations/request";
+import User from "../../domain/entities/user";
 
 export interface IUserRepository {
   //Retrieve user by email
@@ -42,13 +43,37 @@ export interface IUserRepository {
   }: IUser) => Promise<void>;
 
   //Send pairing request
-  sendRequest: ({ senderId, receiverId, planId }: Request) => Promise<void>;
+  sendRequest: ({
+    senderId,
+    receiverId,
+    planId,
+  }: {
+    senderId: string;
+    receiverId: string;
+    planId: string;
+  }) => Promise<void>;
 
   //Delete pairing request
-  deleteRequest: ({ senderId, receiverId, planId }: Request) => Promise<void>;
+  deleteRequest: ({
+    senderId,
+    receiverId,
+    planId,
+  }: {
+    senderId: string;
+    receiverId: string;
+    planId: string;
+  }) => Promise<void>;
 
   //Create Friendship between sender & receiver
-  createFriends: ({ senderId, receiverId, planId }: Request) => Promise<void>;
+  createFriends: ({
+    senderId,
+    receiverId,
+    planId,
+  }: {
+    senderId: string;
+    receiverId: string;
+    planId: string;
+  }) => Promise<void>;
 
   //Subscribe userId to planId for price, assign endDate,
   subscribeToPlan: (
@@ -76,6 +101,18 @@ export interface IUserRepository {
 
   //Get subscriptions by userId
   getAllPairings: (userId: string) => Promise<MyPayment[]>;
+
+  //Filter users
+  filterUsers: (
+    userLat: number,
+    userLong: number,
+    maxDistance: number,
+    category: string[],
+    gender: string,
+    age: number,
+    sortBy: string,
+    order: string
+  ) => Promise<User[]>;
 }
 
 export interface IUser {

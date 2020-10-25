@@ -92,7 +92,7 @@ export class UserController {
       await this.dependencies.userRepository.deleteRequest(args);
     } catch (err) {
       //Format Error Message
-      throw this.dependencies.customError.throw();
+      throw this.dependencies.customError.throw(err);
     }
   }
 
@@ -106,7 +106,7 @@ export class UserController {
       await this.dependencies.userRepository.createFriends(args);
     } catch (err) {
       //Format Error Message
-      throw this.dependencies.customError.throw();
+      throw this.dependencies.customError.throw(err);
     }
   }
 
@@ -154,12 +154,14 @@ export class UserController {
       //Pay to plan via payeeId
       await this.dependencies.userRepository.pay(payeeId, partnerId, planId);
 
+      //Checking if parter has paid
       const partnerPaid: boolean = await this.dependencies.userRepository.checkPayment(
         partnerId,
         payeeId,
         planId
       );
 
+      //If Partern has paid then subscribeToPlan
       if (partnerPaid) {
         //Subscribe payeeId & partnerId to planId for price
         await this.dependencies.userRepository.subscribeToPlan(
@@ -189,10 +191,6 @@ export class UserController {
         userId
       );
 
-      if (result === null) {
-        return [];
-      }
-
       //Return the result
       return result;
     } catch (err) {
@@ -207,6 +205,47 @@ export class UserController {
       //Fetch friendships by userId
       const result = await this.dependencies.userRepository.getAllPairings(
         userId
+      );
+
+      //Return the result
+      return result;
+    } catch (err) {
+      //Format Error Message
+      throw this.dependencies.customError.throw(err);
+    }
+  }
+
+  //filter users
+  async filter({
+    userLat,
+    userLong,
+    maxDistance,
+    category,
+    gender,
+    age,
+    sortBy,
+    order,
+  }: {
+    userLat: number;
+    userLong: number;
+    maxDistance: number;
+    category: string[];
+    gender: string;
+    age: number;
+    sortBy: string;
+    order: string;
+  }): Promise<User[]> {
+    try {
+      //Get result from search use case
+      const result: any = await this.dependencies.userRepository.filterUsers(
+        userLat,
+        userLong,
+        maxDistance,
+        category,
+        gender,
+        age,
+        sortBy,
+        order
       );
 
       //Return the result

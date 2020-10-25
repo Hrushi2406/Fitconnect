@@ -5,50 +5,47 @@ import Friendship from "./relations/friendship";
 import Subscription from "./relations/subscription";
 
 class MyTrainer {
-    readonly plan: Plan;
-    readonly trainer: Trainer;
-    readonly sub: Subscription;
-  
-    constructor({
-      plan,
-      trainer,
-      sub,
-    }: {
-        plan: Plan,
-        trainer: Trainer,
-        sub: Subscription
-    }) {
-      this.plan = plan;
-      this.trainer = trainer;
-      this.sub = sub;
-    }
+  readonly forPlan: Plan;
+  readonly trainer: Trainer;
+  readonly sub: Subscription;
+
+  constructor({
+    forPlan,
+    trainer,
+    sub,
+  }: {
+    forPlan: Plan;
+    trainer: Trainer;
+    sub: Subscription;
+  }) {
+    this.forPlan = forPlan;
+    this.trainer = trainer;
+    this.sub = sub;
+  }
 }
-  
+
 class MyPayment {
-    readonly plan: Plan;
-    readonly trainer: Trainer;
-    readonly partner: User;
-    readonly friendship: Friendship;
-  
-    constructor({
-      plan,
-      trainer,
-      partner,
-      friendship,
-    }: {
-        plan: Plan,
-        trainer: Trainer,
-        partner: User,
-        friendship: Friendship,
-    }) {
-      this.plan = plan;
-      this.trainer = trainer;
-      this.partner = partner;
-      this.friendship = friendship;
-    }
+  readonly forPlan: Plan;
+  readonly trainer: Trainer;
+  readonly partner: User;
+  readonly friendship: Friendship;
+
+  constructor({
+    forPlan,
+    trainer,
+    partner,
+    friendship,
+  }: {
+    forPlan: Plan;
+    trainer: Trainer;
+    partner: User;
+    friendship: Friendship;
+  }) {
+    this.forPlan = forPlan;
+    this.trainer = trainer;
+    this.partner = partner;
+    this.friendship = friendship;
+  }
 }
-  
-export{
-    MyTrainer,
-    MyPayment
-}
+
+export { MyTrainer, MyPayment };

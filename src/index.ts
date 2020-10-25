@@ -61,31 +61,40 @@ const typeDefs = gql`
 
   # My Trainer type
   type MyTrainer {
-    plan: Plan
+    forPlan: Plan
     trainer: Trainer
     sub: Subscription
   }
 
+  #Request type
   type Request {
-    senderId: String
+    sender: User
     receiverId: String
-    planId: String
+    forPlan: Plan
+    trainer: Trainer
   }
+
+  #Subscription type
   type Subscription {
     price: String
     startDate: Date
     endDate: Date
   }
+
+  # Friendship Type
   type Friendship {
     planId: String
     paid: [String]
   }
+
+  # Payment type
   type MyPayment {
-    plan: Plan
+    forPlan: Plan
     trainer: Trainer
     partner: User
     friendship: Friendship
   }
+
   type Query {
     # Seed trainers to database
     seedTrainers: String
@@ -101,8 +110,15 @@ const typeDefs = gql`
     trainer(trainerId: String): Trainer
 
     # Returns my trainers current + Previous
-    myTrainers: [Trainer] @auth
+    myTrainers: [MyTrainer] @auth
 
+    # Return Pairing Request
+    pairingRequests: [Request] @auth
+
+    #Return my last payments
+    myPayments: [MyPayment] @auth
+
+    #Search and filter trainer
     searchTrainer(
       userLat: Float
       userLong: Float
@@ -116,11 +132,18 @@ const typeDefs = gql`
       order: String
       keyword: String
     ): [Trainer]
-    getPairingRequests(userId: String): [Request]
-    getTrainerbyPlanId(planId: String): Trainer
-    getPlanbyId(planId: String): Plan
-    getMyTrainers(userId: String): [MyTrainer]
-    getMyPayments(userId: String): [MyPayment]
+
+    #Search and filter User
+    filterUsers(
+      userLat: Float
+      userLong: Float
+      maxDistance: Int
+      category: [String]
+      gender: String
+      age: Int
+      sortBy: String
+      order: String
+    ): [User] @auth
   }
   type Mutation {
     # Login User
@@ -147,6 +170,23 @@ const typeDefs = gql`
     # Subscribe to plan
     subscribe(planId: String, duration: String, price: Int): String @auth
 
+    # Send pairing request
+    sendRequest(receiverId: String, planId: String): String @auth
+
+    #Decline pairing request
+    declineRequest(senderId: String, planId: String): String @auth
+
+    # Accept pairing requests
+    acceptRequest(senderId: String, planId: String): String @auth
+
+    # Pay in pair
+    payInPair(
+      partnerId: String
+      planId: String
+      duration: String
+      price: Int
+    ): String @auth
+
     updateUserProfile(
       userId: String
       name: String
@@ -158,21 +198,6 @@ const typeDefs = gql`
       bio: String
       address: String
       imageUrl: String
-    ): String
-
-    sendPairingRequest(
-      senderId: String
-      receiverId: String
-      planId: String
-    ): String
-    declineRequest(senderId: String, receiverId: String, planId: String): String
-    acceptRequest(senderId: String, receiverId: String, planId: String): String
-    payInPair(
-      payeeId: String
-      partnerId: String
-      planId: String
-      duration: String
-      price: Int
     ): String
   }
 `;
