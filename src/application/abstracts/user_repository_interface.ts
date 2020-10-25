@@ -9,40 +9,73 @@ export interface IUserRepository {
   getUserById: (userId: string) => Promise<IUser | null>;
 
   //Fetch pairing requests to a user
-  getRequestsToId: (userId: string) => Promise<[Request] | null>; 
+  getRequestsToId: (userId: string) => Promise<Request[]>;
 
   //Update user
-  updateUser: ({ userId, name, email, password, mobile, age, gender, bio, address, imageUrl }: IUser) => Promise<void>;
+  updateUser: ({
+    userId,
+    name,
+    email,
+    password,
+    mobile,
+    age,
+    gender,
+    bio,
+    address,
+    imageUrl,
+  }: IUser) => Promise<void>;
 
   //Sign Up user
-  registerUser: ({ userId, name, email, password, mobile, age, gender, bio, address, imageUrl, lat, lon }: IUser) => Promise<void>;
+  registerUser: ({
+    userId,
+    name,
+    email,
+    password,
+    mobile,
+    age,
+    gender,
+    bio,
+    address,
+    imageUrl,
+    lat,
+    lon,
+  }: IUser) => Promise<void>;
 
   //Send pairing request
-  sendRequest: ({senderId, receiverId, planId}: Request) => Promise<void>;
-  
+  sendRequest: ({ senderId, receiverId, planId }: Request) => Promise<void>;
+
   //Delete pairing request
-  deleteRequest: ({senderId, receiverId, planId}: Request) => Promise<void>;
-  
+  deleteRequest: ({ senderId, receiverId, planId }: Request) => Promise<void>;
+
   //Create Friendship between sender & receiver
-  createFriends: ({senderId, receiverId, planId}: Request) => Promise<void>;
+  createFriends: ({ senderId, receiverId, planId }: Request) => Promise<void>;
 
   //Subscribe userId to planId for price, assign endDate,
-  subscribeToPlan: (userId: string, planId: string, duration:string, price:number) => Promise<void>;
-  
-  //Pay by payeeId to planId 
+  subscribeToPlan: (
+    userId: string,
+    planId: string,
+    duration: string,
+    price: number
+  ) => Promise<void>;
+
+  //Pay by payeeId to planId
   pay: (payeeId: string, partnerId: string, planId: string) => Promise<void>;
 
   //check if both from pair have paid
-  checkPayment: (payeeId: string, partnerId: string, planId: string) => Promise<boolean>;
-  
+  checkPayment: (
+    payeeId: string,
+    partnerId: string,
+    planId: string
+  ) => Promise<boolean>;
+
   //Add user Interests
   addUserInterests: (userId: string, interests: string[]) => Promise<void>;
 
   //Get subscriptions by userId
-  getSubsbyUserId: (userId: string) => Promise<[MyTrainer] | null>;
-  
+  getSubsbyUserId: (userId: string) => Promise<MyTrainer[]>;
+
   //Get subscriptions by userId
-  getAllPairings: (userId: string) => Promise<[MyPayment] | null>;
+  getAllPairings: (userId: string) => Promise<MyPayment[]>;
 }
 
 export interface IUser {

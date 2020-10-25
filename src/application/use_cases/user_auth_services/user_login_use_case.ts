@@ -30,6 +30,7 @@ export class UserLoginUseCase {
 
     //If not throw error
     if (!user) {
+      customError.message = "You don't have a account";
       throw (customError.message = "You don't have a account");
     }
 
@@ -38,6 +39,7 @@ export class UserLoginUseCase {
 
     //Checkings is password valid
     if (!isValid) {
+      customError.message = "Invalid Password";
       throw (customError.password = "Invalid Password");
     }
 

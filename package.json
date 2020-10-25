@@ -29,6 +29,7 @@
   "dependencies": {
     "apollo-server": "^2.16.0",
     "bcrypt": "^5.0.0",
+    "dataloader": "^2.0.0",
     "faker": "^5.1.0",
     "graphql": "^15.3.0",
     "jsonwebtoken": "^8.5.1",

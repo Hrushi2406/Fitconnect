@@ -3,5 +3,5 @@ export interface IAccessTokenManager {
   generate: (userId: string) => Promise<string>;
 
   //verify a  access token
-  verify: (token: string) => Promise<boolean>;
+  verify: (token: string) => Promise<string>;
 }

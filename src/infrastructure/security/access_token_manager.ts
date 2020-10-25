@@ -1,5 +1,6 @@
 import { IAccessTokenManager } from "../../application/abstracts/access_token_manager_interface";
 import jwt from "jsonwebtoken";
+import process from "process";
 
 export class AccessTokenManager implements IAccessTokenManager {
   //Generate a JWT token
@@ -16,5 +17,19 @@ export class AccessTokenManager implements IAccessTokenManager {
     }
   }
 
-  verify: (token: string) => Promise<boolean>;
+  async verify(token: string): Promise<string> {
+    try {
+      const result = jwt.verify(
+        token,
+        process.env.SECRET_KEY as string
+      ) as string;
+
+      return result;
+    } catch (err) {
+      //Logger
+      console.log("Error while Verifying token ", err.message);
+
+      throw err.message;
+    }
+  }
 }

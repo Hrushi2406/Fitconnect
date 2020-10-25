@@ -26,27 +26,54 @@ export const resolvers = {
     },
   }),
 
-  Query: {
-    me: () => {
-      seedTrainer();
-      return "HRushi";
+  //Trainers resolver
+  Trainer: {
+    plans: (parent: any, args: any, ctx: any, info: any) => {
+      return ctx.loader.plans.load(parent.trainerId);
     },
-    user: () => {
+  },
+
+  Query: {
+    //Seed trainers to database
+    seedTrainers: () => {
+      seedTrainer();
+      return "Generating User data";
+    },
+
+    //Seed users to database
+    seedUsers: () => {
       seedUser();
       return "Generating User data";
     },
+
+    //Returns user profile
+    me: (parent: any, args: any, ctx: any, info: any) => {
+      return controllers.userService.getUserProfile(ctx);
+    },
+
+    //Returns recommendations for trainers based on their intrests
+    recommendations: (parent: any, args: any, ctx: any, info: any) => {
+      return controllers.trainerService.getTrainerRecommendation(ctx);
+    },
+
+    //Returns trainers profile
+    trainer: (parent: any, args: any, ctx: any, info: any) => {
+      return controllers.trainerService.getTrainerProfile(args);
+    },
+
+    //Returns my current + previous trainers
+    myTrainers: (parent: any, args: any, ctx: any, info: any) => {
+      return controllers.userService.getMyTrainers(ctx);
+    },
+
     searchTrainer: (parent: any, args: any, ctx: any, info: any) => {
       return controllers.trainerService.filterAndSearch(args);
     },
-    getUserProfile: (parent: any, args: any, ctx: any, info: any) => {
-      return controllers.userService.getUserProfile(args);
-    },
-    getTrainerProfile: (parent: any, args: any, ctx: any, info: any) => {
-      return controllers.trainerService.getTrainerProfile(args);
-    },
-    getTrainerPlans: (parent: any, args: any, ctx: any, info: any) => {
-      return controllers.trainerService.getTrainerPlans(args);
-    },
+
+    // getUserProfile: (parent: any, args: any, ctx: any, info: any) => {
+    //   return controllers.userService.getUserProfile(args);
+    // },
+
     getPairingRequests: (parent: any, args: any, ctx: any, info: any) => {
       return controllers.userService.getPairingRequests(args);
     },
@@ -56,9 +83,7 @@ export const resolvers = {
     getPlanbyId: (parent: any, args: any, ctx: any, info: any) => {
       return controllers.trainerService.getPlanbyId(args);
     },
-    getTrainerRecommendation: (parent: any, args: any, ctx: any, info: any) => {
-      return controllers.trainerService.getTrainerRecommendation(args);
-    },
+
     getMyTrainers: (parent: any, args: any, ctx: any, info: any) => {
       return controllers.userService.getMyTrainers(args);
     },
@@ -67,14 +92,36 @@ export const resolvers = {
     },
   },
 
+  //Mutations
   Mutation: {
+    //Login Usres
     loginAsUser: (parent: any, args: any, ctx: any, info: any) => {
-      console.log(ctx);
       return controllers.userAuthService.login(args);
     },
+
+    //Register users
     registerAsUser: (parent: any, args: any, ctx: any, info: any) => {
       return controllers.userAuthService.register(args);
     },
+
+    //Add user interests
+    addInterests: (parent: any, args: any, ctx: any, info: any) => {
+      //Assign userId to args objett
+      args.userId = ctx.userId;
+      controllers.userService.addUserInterests(args);
+
+      return "Added";
+    },
+
+    //Subscribe to a plan
+    subscribe: (parent: any, args: any, ctx: any, info: any) => {
+      //Assign userId to args objett
+      args.userId = ctx.userId;
+      controllers.userService.subscribe(args);
+
+      return "Subscribed";
+    },
+
     updateUserProfile: (parent: any, args: any, ctx: any, info: any) => {
       controllers.userService.updateUserProfile(args);
       return "Updated";
@@ -91,17 +138,10 @@ export const resolvers = {
       controllers.userService.acceptRequest(args);
       return "Request Accepted";
     },
-    subscribe: (parent: any, args: any, ctx: any, info: any) => {
-      controllers.userService.subscribe(args);
-      return "Subscribed";
-    },
+
     payInPair: (parent: any, args: any, ctx: any, info: any) => {
       controllers.userService.payInPair(args);
       return "Paid";
-    },
-    addUserInterests: (parent: any, args: any, ctx: any, info: any) => {
-      controllers.userService.addUserInterests(args);
-      return "Added";
     },
   },
 };

@@ -33,20 +33,18 @@ export class UserRegisterUseCase {
 
     //Extract from args
     const {
-      userId,
       name,
       email,
       password,
       mobile,
-      age, 
-      gender, 
-      bio, 
-      address, 
+      age,
+      gender,
+      bio,
+      address,
       imageUrl,
       lat,
       lon,
     }: {
-      userId: string;
       name: string;
       email: string;
       password: string;
@@ -62,19 +60,24 @@ export class UserRegisterUseCase {
 
     //Construct a new object of user
     const user: IUser = new User({
-      userId: userId,
       name: name,
       email: email,
       password: password,
       mobile: mobile,
       age: age,
       gender: gender,
-      bio: bio, 
+      bio: bio,
       address: address,
       imageUrl: imageUrl,
       lat: lat,
       lon: lon,
     });
+    //Check if user is already present
+    const prevUser = await userRepository.getUserByEmail(email);
+
+    if (prevUser) {
+      throw "User Already Exists";
+    }
 
     // await user.validate();
 

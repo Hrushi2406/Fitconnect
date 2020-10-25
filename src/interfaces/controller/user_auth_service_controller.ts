@@ -54,6 +54,8 @@ export class UserAuthServiceController {
       //Return the token
       return token;
     } catch (err) {
+      this.dependencies.customError.message = err;
+
       //Format Error Message
       throw this.dependencies.customError.throw();
     }
