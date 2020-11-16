@@ -5,10 +5,10 @@ dotenv.config();
 
 import { ApolloServer, gql, SchemaDirectiveVisitor } from "apollo-server";
 import { resolvers } from "./interfaces/resolvers/resolver";
-import { ITrainer } from "./domain/entities/trainer";
 import AuthSchemaDirective from "./interfaces/schema_directives/auth_directive";
-import { Plan } from "./domain/entities/plans";
 import { dependencies } from "./infrastructure/config/dependency_injector";
+import { ITrainer } from "./domain/entities/trainer";
+import { Plan } from "./domain/entities/plans";
 
 const typeDefs = gql`
   # auth Directive
@@ -100,7 +100,7 @@ const typeDefs = gql`
     seedTrainers: String
     # Seed users to database
     seedUsers: String
-    # Returns user profiusersle
+    # Returns user profile
     me: User @auth
 
     # trainer recommendations
@@ -143,14 +143,14 @@ const typeDefs = gql`
       age: Int
       sortBy: String
       order: String
-    ): [User] @auth
+    ): [User]
   }
+  
   type Mutation {
     # Login User
     loginAsUser(email: String, password: String): String
     # Register User
     registerAsUser(
-      userId: String
       name: String
       email: String
       password: String

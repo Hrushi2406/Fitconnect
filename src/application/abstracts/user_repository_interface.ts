@@ -64,6 +64,17 @@ export interface IUserRepository {
     planId: string;
   }) => Promise<void>;
 
+  //Delete friendship
+  deleteFriendship: ({
+    senderId,
+    receiverId,
+    planId,
+  }: {
+    senderId: string;
+    receiverId: string;
+    planId: string;
+  }) => Promise<void>;
+
   //Create Friendship between sender & receiver
   createFriends: ({
     senderId,

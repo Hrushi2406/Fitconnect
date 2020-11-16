@@ -135,7 +135,7 @@ export class UserRepository implements IUserRepository {
     } catch (err) {
       console.log("Database error: ", err.message);
 
-      throw "Something went wrong";
+      throw "Please fill all fields";
     }
   }
 
@@ -231,6 +231,37 @@ export class UserRepository implements IUserRepository {
     }
   }
 
+  //Delete Friendship
+  async deleteFriendship({
+    senderId,
+    receiverId,
+    planId,
+  }: {
+    senderId: string;
+    receiverId: string;
+    planId: string;
+  }): Promise<void> {
+    //RECEIVER Id = CURRENT USER
+    try {
+      const session = this.db.session();
+
+      const cypher: string =
+        "Match (u:User{userId:$senderId})-[r:FRIENDOF{planId:$planId}]->(v:User{userId:$receiverId}) Delete r";
+
+      await session.run(cypher, {
+        senderId,
+        receiverId,
+        planId,
+      });
+
+      session.close();
+    } catch (err) {
+      console.log("Database error: ", err.message);
+
+      throw "Something went wrong";
+    }
+  }
+
   //Create Friendship between sender & receiver
   async createFriends({
     senderId,
@@ -307,7 +338,7 @@ export class UserRepository implements IUserRepository {
       const cypher: string =
         "Match (u:User{userId:$payeeId})-[f:FRIENDOF{planId:$planId}]-(v:User{userId:$partnerId}) SET f.paid = f.paid + $payeeId";
       await session.run(cypher, { payeeId, partnerId, planId });
-
+      
       session.close();
     } catch (err) {
       console.log("Database error: ", err.message);

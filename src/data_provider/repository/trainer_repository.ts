@@ -238,7 +238,7 @@ export class TrainerRepository implements ITrainerRepository {
       keywordQuery =
         "CALL db.index.fulltext.queryNodes('trainer_index', '" +
         keyword +
-        "') YIELD node ";
+        "*') YIELD node ";
     }
 
     // Query if sortBy applied

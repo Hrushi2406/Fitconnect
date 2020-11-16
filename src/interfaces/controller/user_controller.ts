@@ -176,6 +176,9 @@ export class UserController {
           duration,
           price
         );
+
+        //Delete Friendship
+        await this.dependencies.userRepository.deleteFriendship({senderId: payeeId, receiverId: partnerId, planId: planId});
       }
     } catch (err) {
       //Format Error Message
