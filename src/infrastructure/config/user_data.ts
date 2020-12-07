@@ -1,4 +1,4 @@
-import { attachDirectiveResolvers } from "apollo-server";
+const puppeteer = require('puppeteer');
 import faker from "faker";
 import User from "../../domain/entities/user";
 import { Encrypter } from "../../infrastructure/security/encrypter";
@@ -7,13 +7,15 @@ import driver from "./db_config";
 import { UserRepository } from "../../data_provider/repository/user_repository";
 
 export async function seedUser(): Promise<void> {
+  const Imgs = await scrapeImages("https://www.gettyimages.in/photos/happy-person?family=creative&license=rf&phrase=happy%20person&sort=mostpopular#license");
+
   const session = driver.session();
   const userRepository = new UserRepository(driver);
   const categories = ["Workout", "Yoga", "Zumba", "Meditation"];
 
-  for (let index = 0; index < 200; index++) {
+  for (let index = 0; index < 60; index++) {
     //Creaeteing trainer
-    const user = await createUser();
+    const user = await createUser(Imgs, index);
 
     //ADDIING User
     await userRepository.registerUser(user);
@@ -57,7 +59,7 @@ export async function seedUser(): Promise<void> {
   session.close();
 }
 
-async function createUser(): Promise<User> {
+async function createUser(Imgs: any, index: number): Promise<User> {
   const encrypter = new Encrypter();
   const gender = ["Male", "Female"];
 
@@ -76,14 +78,44 @@ async function createUser(): Promise<User> {
       faker.address.country(),
     bio: faker.lorem.paragraphs(),
     mobile: faker.phone.phoneNumber(),
-    imageUrl: faker.image.people(),
+    imageUrl: Imgs[index],
     lat: parseFloat(
-      faker.address.latitude(19.04345827558254, 18.940387062668094)
+      faker.address.latitude(18.983263072583924, 19.010937241263996)
     ),
     lon: parseFloat(
-      faker.address.longitude(72.88141250610352, 72.79309272766113)
+      faker.address.longitude(73.10776920822252, 73.1290895428582)
     ),
   });
 
   return user;
+}
+
+async function scrapeImages(url : string): Promise<any> {
+  let browser = await puppeteer.launch({
+      headless: true,
+      args: ["--disable-setuid-sandbox"],
+      'ignoreHTTPSErrors': true
+  });
+
+  const page = await browser.newPage();
+  page.goto(url);
+  await page.setViewport({
+      width: 1000,
+      height: 800
+  });
+
+  await page.waitForSelector('.search-content__gallery');
+
+  try {
+      const imgUrl = await page.$$eval(
+          '.search-content__gallery .gallery-mosaic-asset__figure img', 
+          (imgs : any) => imgs.map((img: any) => img.src)
+      );
+      console.log('Scrapped User Images');
+      
+      return imgUrl;
+  } catch (err) {
+      console.log("Went wrong", err);
+  }
+
 }

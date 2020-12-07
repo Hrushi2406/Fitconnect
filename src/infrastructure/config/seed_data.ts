@@ -1,4 +1,4 @@
-import { attachDirectiveResolvers } from "apollo-server";
+const puppeteer = require('puppeteer');
 import faker from "faker";
 import { Trainer, ITrainer } from "../../domain/entities/trainer";
 import { IDGenerator } from "../core/id_generator";
@@ -6,6 +6,8 @@ import driver from "./db_config";
 import { Plan } from "../../domain/entities/plans";
 
 export async function seedTrainer(): Promise<void> {
+  const Imgs = await scrapeImages("https://www.gettyimages.in/photos/fitness-instructor?mediatype=photography&phrase=fitness%20instructor&sort=mostpopular");
+
   const session = driver.session();
 
   const createCategory = `CREATE (n:Category {name: $name }) `;
@@ -19,9 +21,9 @@ export async function seedTrainer(): Promise<void> {
 
   console.log("CREATED CATEGORY");
 
-  for (let index = 0; index < 100; index++) {
+  for (let index = 0; index < 40; index++) {
     //Createing trainer
-    const trainer = createTrainer();
+    const trainer = createTrainer(Imgs, index);
 
     const query: string = `CREATE (t:Trainer {
         trainerId:$trainerId,
@@ -127,7 +129,7 @@ function createPlan(): Plan {
   return plans;
 }
 
-function createTrainer(): Trainer {
+function createTrainer(Imgs: any, index: number): Trainer {
   const gender = ["Male", "Female"];
   const categories = ["Workout", "Yoga", "Zumba", "Meditation"];
 
@@ -147,16 +149,46 @@ function createTrainer(): Trainer {
     category: categories[Math.floor(Math.random() * categories.length)],
     profession: faker.name.jobTitle(),
     mobile: faker.phone.phoneNumber(),
-    images: [faker.image.people()],
+    images: [Imgs[index]],
     fcRating: Math.floor(Math.random() * (99 - 60)) + 60,
     startPrice: 1000000,
     lat: parseFloat(
-      faker.address.latitude(19.04345827558254, 18.940387062668094)
+      faker.address.latitude(18.983263072583924, 19.010937241263996)
     ),
     lon: parseFloat(
-      faker.address.longitude(72.88141250610352, 72.79309272766113)
+      faker.address.longitude(73.10776920822252, 73.1290895428582)
     ),
   });
 
   return trainer;
+}
+
+async function scrapeImages(url : string): Promise<any> {
+  let browser = await puppeteer.launch({
+      headless: true,
+      args: ["--disable-setuid-sandbox"],
+      'ignoreHTTPSErrors': true
+  });
+
+  const page = await browser.newPage();
+  page.goto(url);
+  await page.setViewport({
+      width: 1000,
+      height: 800
+  });
+
+  await page.waitForSelector('.search-content__gallery');
+
+  try {
+      const imgUrl = await page.$$eval(
+          '.search-content__gallery .gallery-mosaic-asset__figure img', 
+          (imgs : any) => imgs.map((img: any) => img.src)
+      );
+      console.log('Scrapped Trainer Images');
+      
+      return imgUrl;
+  } catch (err) {
+      console.log("Went wrong", err);
+  }
+
 }
