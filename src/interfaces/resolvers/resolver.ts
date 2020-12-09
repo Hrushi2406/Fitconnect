@@ -28,6 +28,9 @@ export const resolvers = {
 
   //Trainers resolver
   Trainer: {
+    fcRating: (parent: any, args: any, ctx: any, info: any) => {
+      return dependencies.trainerRepository.getFcRating(parent.trainerId);
+    },
     plans: (parent: any, args: any, ctx: any, info: any) => {
       return ctx.loader.plans.load(parent.trainerId);
     },
@@ -84,6 +87,11 @@ export const resolvers = {
     //search and filters users
     filterUsers: async (parent: any, args: any, ctx: any, info: any) => {
       return await controllers.userService.filter(args);
+    },
+
+    //Return list of reported trainerIds
+    myReportedTrainers: (parent: any, args: any, ctx: any, info: any) => {
+      return controllers.userService.getMyReportedTrainers(ctx);
     },
   },
 
@@ -149,6 +157,13 @@ export const resolvers = {
     updateUserProfile: (parent: any, args: any, ctx: any, info: any) => {
       controllers.userService.updateUserProfile(args);
       return "Updated";
+    },
+
+    //Report a trainer
+    reportTrainer: async (parent: any, args: any, ctx: any, info: any) => {
+      args.userId = ctx.userId;
+      await controllers.userService.reportTrainer(args);
+      return "Reported";
     },
   },
 };

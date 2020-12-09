@@ -5,7 +5,7 @@ import Request from "../../domain/relations/request";
 
 export class UserController {
   //constructor
-  constructor(public dependencies: IDependencies) {}
+  constructor(public dependencies: IDependencies) { }
 
   // <--- USER USECASES --->
 
@@ -178,7 +178,7 @@ export class UserController {
         );
 
         //Delete Friendship
-        await this.dependencies.userRepository.deleteFriendship({senderId: payeeId, receiverId: partnerId, planId: planId});
+        await this.dependencies.userRepository.deleteFriendship({ senderId: payeeId, receiverId: partnerId, planId: planId });
       }
     } catch (err) {
       //Format Error Message
@@ -212,6 +212,36 @@ export class UserController {
 
       //Return the result
       return result;
+    } catch (err) {
+      //Format Error Message
+      throw this.dependencies.customError.throw(err);
+    }
+  }
+
+  //Fetch my reported trainers
+  async getMyReportedTrainers({ userId }: { userId: string }): Promise<string[]> {
+    try {
+
+      const result = await this.dependencies.userRepository.getReportedTrainers(
+        userId
+      );
+
+      //Return the result
+      return result;
+    } catch (err) {
+      //Format Error Message
+      throw this.dependencies.customError.throw(err);
+    }
+  }
+
+  //Fetch my reported trainers
+  async reportTrainer({ userId, trainerId }: { userId: string, trainerId: string }): Promise<void> {
+    try {
+
+      await this.dependencies.userRepository.reportTrainer(
+        userId, trainerId
+      );
+
     } catch (err) {
       //Format Error Message
       throw this.dependencies.customError.throw(err);

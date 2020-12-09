@@ -113,6 +113,12 @@ export interface IUserRepository {
   //Get subscriptions by userId
   getAllPairings: (userId: string) => Promise<MyPayment[]>;
 
+  //Get reported Trainers
+  getReportedTrainers: (userId: string) => Promise<string[]>;
+
+  //Report trainer
+  reportTrainer: (userId: string, trainerId: string) => Promise<void>;
+
   //Filter users
   filterUsers: (
     userLat: number,

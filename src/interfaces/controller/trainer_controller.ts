@@ -27,54 +27,6 @@ export class TrainerController {
     }
   }
 
-  //Get trainer by planId
-  async getTrainerbyPlanId({ planId }: { planId: string }): Promise<Trainer> {
-    try {
-      //Get result from search use case
-      const result: any = await dependencies.trainerRepository.getTrainerbyPlanId(
-        planId
-      );
-
-      //Return the result
-      return result;
-    } catch (err) {
-      //Format Error Message
-      throw this.dependencies.customError.throw(err);
-    }
-  }
-
-  //Get plan by planId
-  async getPlanbyId({ planId }: { planId: string }): Promise<Plan | {}> {
-    try {
-      //Get result from search use case
-      const result: any = await dependencies.trainerRepository.getPlanbyId(
-        planId
-      );
-
-      //Return the result
-      return result;
-    } catch (err) {
-      //Format Error Message
-      throw this.dependencies.customError.throw(err);
-    }
-  }
-
-  //Get plans by trainerId
-  async getTrainerPlans({ trainerId }: { trainerId: string }): Promise<Plan[]> {
-    try {
-      //Get result from search use case
-      const result = await dependencies.trainerRepository.getTrainerPlans(
-        trainerId
-      );
-
-      //Return the result
-      return result;
-    } catch (err) {
-      //Format Error Message
-      throw this.dependencies.customError.throw(err);
-    }
-  }
-
   //Get recommended Trainers
   async getTrainerRecommendation({
     userId,

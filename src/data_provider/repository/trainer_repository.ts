@@ -32,85 +32,6 @@ export class TrainerRepository implements ITrainerRepository {
     }
   }
 
-  //Get trainer profile by planId
-  async getTrainerbyPlanId(planId: string): Promise<ITrainer | null> {
-    try {
-      const session = this.db.session();
-
-      const cypher: string =
-        "Match ( p:Plan { planId: $planId } )<-[:HAS]-(t:Trainer) Return t";
-      const result = await session.run(cypher, { planId });
-
-      session.close();
-
-      if (result.records.length == 0) {
-        return null;
-      }
-
-      const trainer = new Trainer(result.records[0].get("t").properties);
-
-      return trainer;
-    } catch (err) {
-      console.log("Database error: ", err.message);
-
-      throw "Something went wrong";
-    }
-  }
-
-  //Get plan by planId
-  async getPlanbyId(planId: string): Promise<Plan | null> {
-    try {
-      const session = this.db.session();
-
-      const cypher: string = "Match (p:Plan {planId:$planId} ) return p";
-      const result = await session.run(cypher, { planId });
-
-      session.close();
-
-      if (result.records.length == 0) {
-        return null;
-      }
-
-      const plan = new Plan(result.records[0].get("p").properties);
-
-      return plan;
-    } catch (err) {
-      console.log("Database error: ", err.message);
-
-      throw "Something went wrong";
-    }
-  }
-
-  //Get plans by trainerId
-  async getTrainerPlans(trainerId: string): Promise<Plan[]> {
-    try {
-      const session = this.db.session();
-
-      const cypher: string =
-        "Match ( t:Trainer { trainerId: $trainerId } )-[:HAS]->( p:Plan ) return p ORDER BY p.type";
-      const result = await session.run(cypher, { trainerId: trainerId });
-
-      session.close();
-
-      var planList: Plan[] = [];
-
-      if (result.records.length == 0) {
-        return planList;
-      }
-
-      result.records.map((record) => {
-        const plan = new Plan(record.get("p").properties);
-        planList.push(plan);
-      });
-
-      return planList;
-    } catch (err) {
-      console.log("Database error: ", err.message);
-
-      throw "Something went wrong";
-    }
-  }
-
   //Get all plans from given list of trainer ids
   async getAllPlansFromTrainerIds(
     trainerIds: readonly string[]
@@ -175,6 +96,29 @@ export class TrainerRepository implements ITrainerRepository {
       });
 
       return trainerList;
+    } catch (err) {
+      console.log("Database error: ", err.message);
+
+      throw "Something went wrong";
+    }
+  }
+
+  //Get trainer's rating
+  async getFcRating(trainerId: string): Promise<number> {
+    try {
+      const session = this.db.session();
+
+      const cypher: string = "Match (a:Trainer {trainerId:$trainerId} ) Match (t:Trainer) return a.fcRating as points, max(t.fcRating) as maxPoints";
+      const result = await session.run(cypher, { trainerId });
+      
+      session.close();
+
+      const currPoints = result.records[0].get('points');
+      const maxPoints = result.records[0].get('maxPoints');
+
+      const fcRating = Math.ceil((currPoints/maxPoints)*100);
+
+      return fcRating;
     } catch (err) {
       console.log("Database error: ", err.message);
 

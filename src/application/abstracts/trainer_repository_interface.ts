@@ -5,15 +5,6 @@ export interface ITrainerRepository {
   //Get trainer profile
   getTrainerbyId: (trainerId: string) => Promise<ITrainer | null>;
 
-  //Get trainer profile by planId
-  getTrainerbyPlanId: (planId: string) => Promise<ITrainer | null>;
-
-  //Get plan by planId
-  getPlanbyId: (planId: string) => Promise<Plan | null>;
-
-  //Get trainer plans
-  getTrainerPlans: (trainerId: string) => Promise<Plan[]>;
-
   //Get All plans from list of trainerID
   getAllPlansFromTrainerIds(
     trainerIds: readonly string[]
@@ -21,6 +12,9 @@ export interface ITrainerRepository {
 
   //Get trainers recommended to userId by his interests
   recommendTrainers: (userId: string) => Promise<ITrainer[]>;
+
+  //Get trainer's rating
+  getFcRating: (trainerId: string) => Promise<number>;
 
   //Full text search & execute the query
   searchTrainers: (

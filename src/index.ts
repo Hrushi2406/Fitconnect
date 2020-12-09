@@ -118,6 +118,9 @@ const typeDefs = gql`
     #Return my last payments
     myPayments: [MyPayment] @auth
 
+    #Return list of trainers reported
+    myReportedTrainers: [String] @auth 
+
     #Search and filter trainer
     searchTrainer(
       userLat: Float
@@ -199,6 +202,10 @@ const typeDefs = gql`
       address: String
       imageUrl: String
     ): String
+
+    reportTrainer(
+      trainerId: String
+    ): String @auth
   }
 `;
 

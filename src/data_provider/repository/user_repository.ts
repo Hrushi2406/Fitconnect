@@ -321,6 +321,9 @@ export class UserRepository implements IUserRepository {
         price,
       });
 
+      const ratingQuery: string = "Match (p:Plan {planId:$planId})<-[:HAS]-(t:Trainer) SET t.fcRating = t.fcRating + 2";
+      await session.run(ratingQuery, {planId});
+
       session.close();
     } catch (err) {
       console.log("Database error: ", err.message);
@@ -454,6 +457,56 @@ export class UserRepository implements IUserRepository {
       });
 
       return myPaymentList;
+    } catch (err) {
+      console.log("Database error: ", err.message);
+
+      throw "Something went wrong";
+    }
+  }
+
+  //Get reported Trainers
+  async getReportedTrainers (userId: string): Promise<string[]> {
+    try {
+      const session = this.db.session();
+
+      const cypher: string =
+        "Match (u:User {userId:$userId})-[:REPORTED]->(t:Trainer) return t.trainerId as id";
+      const result = await session.run(cypher, { userId: userId });
+
+      session.close();
+
+      let myReportList: string[] = [];
+
+      if (result.records.length == 0) {
+        return myReportList;
+      }
+
+      result.records.map((record) => {
+        const trainerId = record.get("id");
+
+        myReportList.push(trainerId);
+      });
+
+      return myReportList;
+    } catch (err) {
+      console.log("Database error: ", err.message);
+
+      throw "Something went wrong";
+    }
+  }
+
+  //Report trainer
+  async reportTrainer (userId: string, trainerId: string): Promise<void>{
+    try {
+      const session = this.db.session();
+
+      const cypher = `MATCH (u:User{userId:$userId}) Match (t:Trainer {trainerId:$trainerId}) Create (u)-[:REPORTED]->(t)`;
+      await session.run(cypher, { userId, trainerId });
+      
+      const ratingQuery: string = "Match (t:Trainer {trainerId:$trainerId}) SET t.fcRating = t.fcRating - 5";
+      await session.run(ratingQuery, {trainerId});
+
+      session.close();
     } catch (err) {
       console.log("Database error: ", err.message);
 
