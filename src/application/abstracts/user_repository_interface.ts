@@ -13,18 +13,11 @@ export interface IUserRepository {
   getRequestsToId: (userId: string) => Promise<Request[]>;
 
   //Update user
-  updateUser: ({
-    userId,
-    name,
-    email,
-    password,
-    mobile,
-    age,
-    gender,
-    bio,
-    address,
-    imageUrl,
-  }: IUser) => Promise<void>;
+  updateUser: (
+    userId: string,
+    lat: number,
+    lon: number,
+  ) => Promise<void>;
 
   //Sign Up user
   registerUser: ({

@@ -81,10 +81,10 @@ async function createUser(Imgs: any, index: number): Promise<User> {
     mobile: faker.phone.phoneNumber(),
     imageUrl: Imgs[index],
     lat: parseFloat(
-      faker.address.latitude(18.983263072583924, 19.010937241263996)
+      faker.address.latitude(18.98187508229609, 19.024136650029877)
     ),
     lon: parseFloat(
-      faker.address.longitude(73.10776920822252, 73.1290895428582)
+      faker.address.longitude(73.09148912801847, 73.1222183629399)
     ),
   });
 

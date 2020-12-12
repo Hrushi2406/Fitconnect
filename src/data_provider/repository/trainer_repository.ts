@@ -79,7 +79,9 @@ export class TrainerRepository implements ITrainerRepository {
       const session = this.db.session();
 
       const cypher: string =
-        "Match (u:User {userId:$userId}) Match (u)-[:OFTYPE]->( c:Category )<-[:OFTYPE]-(t:Trainer) return t ORDER BY t.fcRating DESC";
+        `Match (u:User {userId: $userId})-[:OFTYPE]->(c:Category )<-[:OFTYPE]-(t:Trainer) return t AS t UNION ` +
+        `Match (u)-[:FRIENDOF]-(v:User)-[:OFTYPE]->(c:Category)<-[:OFTYPE]-(nt:Trainer) return nt as t UNION ` +
+        `Match (v)-[:SUBSCRIBED]->(p:Plan)<-[:HAS]-(nnt:Trainer) return nnt as t`;
       const result = await session.run(cypher, { userId });
 
       session.close();

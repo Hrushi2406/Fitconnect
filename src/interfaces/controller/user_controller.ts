@@ -49,7 +49,9 @@ export class UserController {
   async updateUserProfile(args: any): Promise<void> {
     try {
       //Get user
-      await this.dependencies.userRepository.updateUser(args);
+      const { userId, lat, lon } = args;
+      console.log(userId, lat, lon)
+      await this.dependencies.userRepository.updateUser(userId, lat, lon);
     } catch (err) {
       //Format Error Message
       throw this.dependencies.customError.throw(err);

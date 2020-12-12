@@ -154,7 +154,8 @@ export const resolvers = {
       return "Paid";
     },
 
-    updateUserProfile: (parent: any, args: any, ctx: any, info: any) => {
+    updateUserLocation: (parent: any, args: any, ctx: any, info: any) => {
+      args.userId = ctx.userId; 
       controllers.userService.updateUserProfile(args);
       return "Updated";
     },

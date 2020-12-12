@@ -189,19 +189,12 @@ const typeDefs = gql`
       duration: String
       price: Int
     ): String @auth
-
-    updateUserProfile(
-      userId: String
-      name: String
-      email: String
-      password: String
-      mobile: String
-      age: Int
-      gender: String
-      bio: String
-      address: String
-      imageUrl: String
-    ): String
+    
+    # Update permanent location
+    updateUserLocation(
+      lat: Float
+      lon: Float
+    ): String @auth
 
     reportTrainer(
       trainerId: String

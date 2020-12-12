@@ -1,4 +1,4 @@
-import { Date as NeoDate, Driver } from "neo4j-driver";
+import { Date as NeoDate, DateTime, Driver } from "neo4j-driver";
 import Request from "../../domain/relations/request";
 import { IUserRepository } from "../../application/abstracts/user_repository_interface";
 import { IUser } from "../../application/abstracts/user_repository_interface";
@@ -59,34 +59,20 @@ export class UserRepository implements IUserRepository {
     }
   }
 
-  async updateUser({
-    userId,
-    name,
-    email,
-    password,
-    mobile,
-    age,
-    gender,
-    bio,
-    address,
-    imageUrl,
-  }: IUser): Promise<void> {
+  async updateUser(
+    userId: string,
+    lat: number,
+    lon: number,
+  ): Promise<void> {
     try {
       const session = this.db.session();
 
       const cypher: string =
-        "Match (u:User {userId:$userId} ) SET u.name=$name, u.mobile=$mobile, u.age=$age, u.gender=$gender, u.bio=$bio, u.address=$address";
+        "Match (u:User {userId:$userId} ) SET u.lat=$lat, u.lon=$lon";
       await session.run(cypher, {
         userId,
-        name,
-        email,
-        password,
-        mobile,
-        age,
-        gender,
-        bio,
-        address,
-        imageUrl,
+        lat,
+        lon
       });
 
       session.close();
@@ -303,11 +289,16 @@ export class UserRepository implements IUserRepository {
       if (duration == "Weekly") {
         endDate.setDate(endDate.getDate() + 7);
       } else {
-        endDate.setMonth(endDate.getMonth() + 1);
+        if(endDate.getMonth() == 11){
+          endDate.setMonth(0);
+          endDate.setFullYear(endDate.getFullYear() + 1);
+        }else{
+          endDate.setMonth(endDate.getMonth() + 1);
+        }
       }
 
       const eYear = Math.floor(endDate.getFullYear());
-      const eMonth = Math.floor(endDate.getMonth());
+      const eMonth = Math.floor(endDate.getMonth())+1;
       const eDate = Math.floor(endDate.getDate());
 
       const cypher: string =
