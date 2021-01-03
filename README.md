@@ -17,7 +17,19 @@ Nearby trainers & unmatched users will be visualized on map. Users can also visu
 
 ## Screenshots
 
-![Alt text](map.png?raw=true "Map")
+![Alt text](./images/map1.png?raw=true "Map") <br/>
+
+![Alt text](./images/map2.png?raw=true "Map") <br/>
+
+![Alt text](./images/filter.png?raw=true "Map Filter") <br/>
+
+![Alt text](./images/search.png?raw=true "Search") <br/>
+
+![Alt text](./images/trainer.png?raw=true "Trainer Profile") <br/>
+
+![Alt text](./images/request.png?raw=true "Friends") <br/>
+
+![Alt text](./images/mytrainers.png?raw=true "My Trainer") <br/>
 
 
 
